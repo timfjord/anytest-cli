@@ -64,4 +64,8 @@ impl Args {
             Scope::File
         }
     }
+
+    pub fn is_dry_run(&self) -> bool {
+        self.dry_run
+    }
 }
