@@ -1,10 +1,10 @@
 use any_test::{Context, Line, Scope};
 use clap::Parser;
 use regex::Regex;
-use std::env;
 use std::error::Error;
-use std::path::PathBuf;
 use std::process::Command;
+
+const PATH_REGEX: &str = r"^(.*?)(?::(\d+))?$";
 
 /// Run any test from CLI
 #[derive(Parser, Debug)]
@@ -33,12 +33,7 @@ pub struct Args {
 
 impl Args {
     pub fn build_context(&self) -> Result<Context, Box<dyn Error>> {
-        let root = if let Some(root) = &self.root {
-            PathBuf::from(root)
-        } else {
-            env::current_dir()?
-        };
-        let re = Regex::new(r"^(.*?)(?::(\d+))?$")?;
+        let re = Regex::new(PATH_REGEX)?;
         let caps = re.captures(&self.path).ok_or("Invalid path")?;
         let path = caps.get(1).ok_or("Invalid path")?.as_str();
         let line = caps
@@ -46,7 +41,7 @@ impl Args {
             .map(|m| m.as_str().parse::<Line>())
             .transpose()?;
 
-        Ok(Context::new(root, PathBuf::from(path), line))
+        Context::new(self.root.as_deref(), path, line)
     }
 
     pub fn scope(&self, context: &Context) -> Scope {
