@@ -1,16 +1,10 @@
-use crate::{Context, Line};
-use clap::{Parser, ValueEnum};
+use any_test::{Context, Line, Scope};
+use clap::Parser;
 use regex::Regex;
 use std::env;
 use std::error::Error;
 use std::path::PathBuf;
-
-#[derive(ValueEnum, Clone, Debug)]
-pub enum Scope {
-    Suite,
-    File,
-    Line,
-}
+use std::process::Command;
 
 /// Run any test from CLI
 #[derive(Parser, Debug)]
@@ -58,7 +52,7 @@ impl Args {
     pub fn scope(&self, context: &Context) -> Scope {
         if let Some(scope) = &self.scope {
             scope.clone()
-        } else if let Some(_) = context.line {
+        } else if let Some(_) = context.line() {
             Scope::Line
         } else {
             Scope::File
@@ -68,4 +62,16 @@ impl Args {
     pub fn is_dry_run(&self) -> bool {
         self.dry_run
     }
+}
+
+pub fn format_command(command: &Command) -> String {
+    format!(
+        "{} {}",
+        command.get_program().to_str().unwrap_or_default(),
+        command
+            .get_args()
+            .map(|a| a.to_str().unwrap_or_default())
+            .collect::<Vec<&str>>()
+            .join(" ")
+    )
 }

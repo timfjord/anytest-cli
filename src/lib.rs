@@ -1,44 +1,46 @@
-use clap::Parser;
-use cli::{Args, Scope};
+use clap::ValueEnum;
 use std::error::Error;
 use std::path::PathBuf;
 use std::process::Command;
 
-mod cli;
+pub type Line = usize;
 
-type Line = usize;
+#[derive(ValueEnum, Clone, Debug)]
+pub enum Scope {
+    Suite,
+    File,
+    Line,
+}
 
 #[derive(Debug)]
-struct Context {
+pub struct Context {
     root: PathBuf,
     path: PathBuf,
     line: Option<Line>,
 }
 
 impl Context {
-    fn new(root: PathBuf, path: PathBuf, line: Option<Line>) -> Context {
+    pub fn new(root: PathBuf, path: PathBuf, line: Option<Line>) -> Context {
         Self { root, path, line }
+    }
+
+    pub fn root(&self) -> &PathBuf {
+        &self.root
+    }
+
+    pub fn path(&self) -> &PathBuf {
+        &self.path
+    }
+
+    pub fn line(&self) -> Option<&Line> {
+        self.line.as_ref()
     }
 }
 
-fn format_command(command: &Command) -> String {
-    format!(
-        "{} {}",
-        command.get_program().to_str().unwrap_or_default(),
-        command
-            .get_args()
-            .map(|a| a.to_str().unwrap_or_default())
-            .collect::<Vec<&str>>()
-            .join(" ")
-    )
-}
-
-pub fn run() -> Result<(), Box<dyn Error>> {
-    let args = Args::parse();
-    let context = args.build_context()?;
-    let scope = args.scope(&context);
-
+pub fn build_command(scope: Scope, context: Context) -> Result<Command, Box<dyn Error>> {
     let mut command = Command::new("echo");
+    command.current_dir(&context.root);
+
     match scope {
         Scope::Suite => command.args(["suite"]),
         Scope::File => command.args(["file", context.path.to_str().unwrap()]),
@@ -49,11 +51,5 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         ]),
     };
 
-    if args.is_dry_run() {
-        println!("{}", format_command(&command));
-    } else {
-        command.current_dir(&context.root).spawn()?;
-    }
-
-    Ok(())
+    Ok(command)
 }
