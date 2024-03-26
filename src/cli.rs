@@ -4,7 +4,7 @@ use regex::Regex;
 use std::error::Error;
 use std::process::Command;
 
-const PATH_REGEX: &str = r"^(.*?)(?::(\d+))?$";
+const PATH_REGEX: &str = r"^(.*?)(?::(\d*))?$";
 
 /// Run any test from CLI
 #[derive(Parser, Debug)]
@@ -36,10 +36,7 @@ impl Args {
         let re = Regex::new(PATH_REGEX)?;
         let caps = re.captures(&self.path).ok_or("Invalid path")?;
         let path = caps.get(1).ok_or("Invalid path")?.as_str();
-        let line = caps
-            .get(2)
-            .map(|m| m.as_str().parse::<Line>())
-            .transpose()?;
+        let line = caps.get(2).map(|m| m.as_str().parse::<Line>().unwrap_or(1));
 
         Context::new(self.root.as_deref(), path, line)
     }
