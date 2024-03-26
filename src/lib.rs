@@ -9,6 +9,7 @@ pub type Line = usize;
 pub struct RelPath {
     root: PathBuf,
     path: PathBuf,
+    rel_path: PathBuf,
 }
 
 impl RelPath {
@@ -18,9 +19,36 @@ impl RelPath {
         } else {
             std::env::current_dir()?
         };
-        let path = PathBuf::from(path);
 
-        Ok(Self { root, path })
+        if !root.is_absolute() {
+            return Err("Root path must be absolute".into());
+        }
+
+        if !root.is_dir() {
+            return Err("Root path must be a directory".into());
+        }
+
+        let mut path = PathBuf::from(path);
+
+        if !path.is_absolute() {
+            path = root.join(path);
+        }
+
+        if !path.exists() {
+            return Err("Path does not exist".into());
+        }
+
+        let rel_path = path
+            .clone()
+            .strip_prefix(&root)
+            .map_err(|_| "Path must be a subpath of the root path")?
+            .to_path_buf();
+
+        Ok(Self {
+            root,
+            path,
+            rel_path,
+        })
     }
 
     pub fn root(&self) -> &PathBuf {
@@ -29,6 +57,10 @@ impl RelPath {
 
     pub fn path(&self) -> &PathBuf {
         &self.path
+    }
+
+    pub fn rel_path(&self) -> &PathBuf {
+        &self.rel_path
     }
 }
 
@@ -60,6 +92,10 @@ impl Context {
         &self.rel_path.path()
     }
 
+    pub fn rel_path(&self) -> &PathBuf {
+        &self.rel_path.rel_path()
+    }
+
     pub fn line(&self) -> Option<Line> {
         self.line
     }
@@ -71,10 +107,10 @@ pub fn build_command(scope: Scope, context: Context) -> Result<Command, Box<dyn 
 
     match scope {
         Scope::Suite => command.args(["suite"]),
-        Scope::File => command.args(["file", context.path().to_str().unwrap()]),
+        Scope::File => command.args(["file", context.rel_path().to_str().unwrap()]),
         Scope::Line => command.args([
             "line",
-            context.path().to_str().unwrap(),
+            context.rel_path().to_str().unwrap(),
             context.line().unwrap_or(1).to_string().as_str(),
         ]),
     };
