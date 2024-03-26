@@ -75,7 +75,7 @@ pub fn build_command(scope: Scope, context: Context) -> Result<Command, Box<dyn 
         Scope::Line => command.args([
             "line",
             context.path().to_str().unwrap(),
-            context.line().unwrap().to_string().as_str(),
+            context.line().unwrap_or(1).to_string().as_str(),
         ]),
     };
 
