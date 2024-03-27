@@ -25,7 +25,7 @@ impl RelPath {
         }
 
         if !root.is_dir() {
-            return Err("Root path must be a directory".into());
+            return Err("Root path must be an existing directory".into());
         }
 
         let mut path = PathBuf::from(path);
@@ -116,4 +116,72 @@ pub fn build_command(scope: Scope, context: Context) -> Result<Command, Box<dyn 
     };
 
     Ok(command)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::{
+        env,
+        fs::{self, File},
+    };
+
+    fn create_folder(base: &PathBuf, path: &str) -> Result<PathBuf, Box<dyn Error>> {
+        let folder = base.join(path);
+
+        match fs::create_dir(&folder) {
+            Ok(_) => Ok(folder),
+            Err(error) => match error.kind() {
+                std::io::ErrorKind::AlreadyExists => Ok(folder),
+                _ => Err(error.into()),
+            },
+        }
+    }
+
+    fn rel_path_error(root: &str, path: &str) -> String {
+        RelPath::new(Some(root), path).unwrap_err().to_string()
+    }
+
+    #[test]
+    fn test_rel_path_new() {
+        let dir = env::temp_dir();
+        let folder = create_folder(&dir, "folder").unwrap();
+        let file = folder.join("file.rs");
+        let other_file = dir.join("other_file.rs");
+
+        File::create(&file).unwrap();
+        File::create(&other_file).unwrap();
+
+        assert_eq!(
+            rel_path_error("some_folder", ""),
+            "Root path must be absolute"
+        );
+
+        assert_eq!(
+            rel_path_error(file.to_str().unwrap(), ""),
+            "Root path must be an existing directory"
+        );
+
+        assert_eq!(
+            rel_path_error("/tmp/some_folder", ""),
+            "Root path must be an existing directory"
+        );
+
+        assert_eq!(
+            rel_path_error(folder.to_str().unwrap(), "non_existent.rs"),
+            "Path does not exist"
+        );
+
+        assert_eq!(
+            rel_path_error(folder.to_str().unwrap(), other_file.to_str().unwrap()),
+            "Path must be a subpath of the root path"
+        );
+
+        let rel_path =
+            RelPath::new(Some(folder.to_str().unwrap()), file.to_str().unwrap()).unwrap();
+
+        assert_eq!(*rel_path.root(), folder);
+        assert_eq!(*rel_path.path(), file);
+        assert_eq!(*rel_path.rel_path(), PathBuf::from("file.rs"));
+    }
 }
