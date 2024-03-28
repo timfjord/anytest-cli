@@ -155,4 +155,12 @@ mod tests {
 
         assert!(matches!(args.scope(&context), Scope::File));
     }
+
+    #[test]
+    fn test_format_command() {
+        let mut command = Command::new("echo");
+        command.arg("Hello,").arg("World!");
+
+        assert_eq!(format_command(&command), "echo Hello, World!");
+    }
 }
