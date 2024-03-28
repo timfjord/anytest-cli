@@ -7,7 +7,7 @@ mod cli;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
-    let context = args.build_context()?;
+    let context = args.to_context()?;
     let scope = args.scope(&context);
     let mut command = any_test::build_command(scope, context)?;
 

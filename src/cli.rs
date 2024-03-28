@@ -32,11 +32,15 @@ pub struct Args {
 }
 
 impl Args {
-    pub fn build_context(&self) -> Result<Context, Box<dyn Error>> {
+    pub fn to_context(&self) -> Result<Context, Box<dyn Error>> {
         let re = Regex::new(PATH_REGEX)?;
         let caps = re.captures(&self.path).ok_or("Invalid path")?;
         let path = caps.get(1).ok_or("Invalid path")?.as_str();
-        let line = caps.get(2).map(|m| m.as_str().parse::<Line>().unwrap_or(1));
+        let line = caps
+            .get(2)
+            .map(|m| m.as_str().parse::<Line>())
+            .transpose()
+            .unwrap_or(None);
 
         Context::new(self.root.as_deref(), path, line)
     }
@@ -66,4 +70,89 @@ pub fn format_command(command: &Command) -> String {
             .collect::<Vec<&str>>()
             .join(" ")
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use std::{
+        env,
+        fs::{self, File},
+        path::PathBuf,
+    };
+
+    use super::*;
+
+    fn init(folder_name: &str, file_name: &str) -> (PathBuf, PathBuf) {
+        let dir = env::temp_dir();
+        let folder = dir.join(folder_name);
+
+        if let Err(error) = fs::create_dir(&folder) {
+            if error.kind() != std::io::ErrorKind::AlreadyExists {
+                panic!("Cannot create folder");
+            }
+        };
+
+        let file = folder.join(file_name);
+
+        File::create(&file).unwrap();
+
+        (folder, file)
+    }
+
+    fn build_args(root: &PathBuf, path: &str) -> Args {
+        Args {
+            path: path.to_string(),
+            scope: None,
+            root: Some(root.to_str().unwrap().to_string()),
+            config: None,
+            dry_run: false,
+        }
+    }
+
+    #[test]
+    fn test_args_to_context() {
+        let (folder, file) = init("folder", "test.rs");
+
+        let args = build_args(&folder, "test.rs:123");
+        let context = args.to_context().unwrap();
+
+        assert_eq!(context.root(), &folder);
+        assert_eq!(context.path(), &file);
+        assert_eq!(context.rel_path(), &PathBuf::from("test.rs"));
+        assert_eq!(context.line(), Some(123));
+
+        let args = build_args(&folder, "test.rs:");
+        let context = args.to_context().unwrap();
+
+        assert_eq!(context.root(), &folder);
+        assert_eq!(context.path(), &file);
+        assert_eq!(context.rel_path(), &PathBuf::from("test.rs"));
+        assert_eq!(context.line(), None);
+
+        let args = build_args(&folder, "test.rs");
+        let context = args.to_context().unwrap();
+
+        assert_eq!(context.root(), &folder);
+        assert_eq!(context.path(), &file);
+        assert_eq!(context.rel_path(), &PathBuf::from("test.rs"));
+        assert_eq!(context.line(), None);
+    }
+
+    #[test]
+    fn test_args_scope() {
+        let (folder, _) = init("folder", "test.rs");
+
+        let mut args = build_args(&folder, "test.rs:123");
+        let context = args.to_context().unwrap();
+
+        assert!(matches!(args.scope(&context), Scope::Line));
+
+        args.scope = Some(Scope::Suite);
+        assert!(matches!(args.scope(&context), Scope::Suite));
+
+        let args = build_args(&folder, "test.rs");
+        let context = args.to_context().unwrap();
+
+        assert!(matches!(args.scope(&context), Scope::File));
+    }
 }
