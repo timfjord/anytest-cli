@@ -5,22 +5,10 @@ pub use cargotest::CargoTest;
 
 mod cargotest;
 
-// derive[LanguageMeta]
+#[derive(LanguageMeta)]
 struct Rust {
-    // name
     name: String,
-    // env
     env: EnvHashMap,
-}
-
-impl LanguageMeta for Rust {
-    fn name(&self) -> &str {
-        &self.name
-    }
-
-    fn env(&self) -> &EnvHashMap {
-        &self.env
-    }
 }
 
 impl Language for Rust {}

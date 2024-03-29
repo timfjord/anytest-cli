@@ -9,7 +9,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
     let context = args.to_context()?;
     let scope = args.scope(&context);
-    let mut command = any_test::build_command(scope, context)?;
+    let mut command = anytest::build_command(scope, context)?;
 
     if args.is_dry_run() {
         println!("{}", format_command(&command));

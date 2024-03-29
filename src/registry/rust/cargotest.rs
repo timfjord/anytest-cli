@@ -3,34 +3,12 @@ use regex::{Error, Regex};
 
 use super::Rust;
 
-// derive[TestFrameworkMeta]
+#[derive(TestFrameworkMeta)]
 pub struct CargoTest {
-    // language,
     language: Rust,
-    // name
     name: String,
-    // pattern
     pattern: String,
-    // env
     env: EnvHashMap,
-}
-
-impl TestFrameworkMeta for CargoTest {
-    fn language(&self) -> Box<&dyn Language> {
-        Box::new(&self.language)
-    }
-
-    fn name(&self) -> &str {
-        &self.name
-    }
-
-    fn pattern(&self) -> Result<Regex, Error> {
-        Regex::new(&self.pattern)
-    }
-
-    fn env(&self) -> &EnvHashMap {
-        &self.env
-    }
 }
 
 impl TestFramework for CargoTest {

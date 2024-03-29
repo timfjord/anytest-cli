@@ -3,6 +3,9 @@ use std::error::Error;
 use std::path::PathBuf;
 use std::process::Command;
 
+#[macro_use]
+extern crate anytest_derive;
+
 mod registry;
 
 pub type Line = usize;
