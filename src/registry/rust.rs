@@ -1,27 +1,35 @@
-use super::{Language, LanguageData};
+use super::{EnvHashMap, Language, LanguageMeta};
 
 // Test frameworks
 pub use cargotest::CargoTest;
 
 mod cargotest;
 
+// derive[LanguageMeta]
 struct Rust {
-    data: LanguageData,
+    // name
+    name: String,
+    // env
+    env: EnvHashMap,
 }
+
+impl LanguageMeta for Rust {
+    fn name(&self) -> &str {
+        &self.name
+    }
+
+    fn env(&self) -> &EnvHashMap {
+        &self.env
+    }
+}
+
+impl Language for Rust {}
 
 impl Default for Rust {
     fn default() -> Self {
         Self {
-            data: LanguageData {
-                name: "rust".into(),
-                env: Default::default(),
-            },
+            name: "rust".into(),
+            env: Default::default(),
         }
-    }
-}
-
-impl Language for Rust {
-    fn data(&self) -> &LanguageData {
-        &self.data
     }
 }

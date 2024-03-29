@@ -94,6 +94,10 @@ impl Context {
         &self.rel_path.path()
     }
 
+    pub fn path_str(&self) -> &str {
+        &self.rel_path.path().to_str().unwrap_or_default()
+    }
+
     pub fn rel_path(&self) -> &PathBuf {
         &self.rel_path.rel_path()
     }
@@ -110,7 +114,7 @@ pub fn build_command(scope: Scope, context: Context) -> Result<Command, Box<dyn 
     let registry = registry::Registry::new();
 
     for framework in registry {
-        println!("{} - {}", framework.language(), framework.framework());
+        println!("{} - {}", framework.language_name(), framework.name());
     }
 
     match scope {

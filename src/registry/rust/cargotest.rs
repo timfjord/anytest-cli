@@ -1,47 +1,51 @@
-use crate::registry::{Framework, FrameworkData, Language};
+use crate::registry::{EnvHashMap, Language, TestFramework, TestFrameworkMeta};
+use regex::{Error, Regex};
 
 use super::Rust;
 
+// derive[TestFrameworkMeta]
 pub struct CargoTest {
-    language_data: Rust,
-    framework_data: FrameworkData,
+    // language,
+    language: Rust,
+    // name
+    name: String,
+    // pattern
+    pattern: String,
+    // env
+    env: EnvHashMap,
+}
+
+impl TestFrameworkMeta for CargoTest {
+    fn language(&self) -> Box<&dyn Language> {
+        Box::new(&self.language)
+    }
+
+    fn name(&self) -> &str {
+        &self.name
+    }
+
+    fn pattern(&self) -> Result<Regex, Error> {
+        Regex::new(&self.pattern)
+    }
+
+    fn env(&self) -> &EnvHashMap {
+        &self.env
+    }
+}
+
+impl TestFramework for CargoTest {
+    fn executable(&self) -> String {
+        "cargo test".into()
+    }
 }
 
 impl Default for CargoTest {
     fn default() -> Self {
         Self {
-            language_data: Rust::default(),
-            framework_data: FrameworkData {
-                name: "cargotest".into(),
-                env: Default::default(),
-                pattern: r".rs$".into(),
-            },
+            language: Rust::default(),
+            name: "cargotest".into(),
+            pattern: r".rs$".into(),
+            env: Default::default(),
         }
-    }
-}
-
-impl Framework for CargoTest {
-    fn language_data(&self) -> Box<&dyn Language> {
-        Box::new(&self.language_data)
-    }
-
-    fn framework_data(&self) -> &FrameworkData {
-        &self.framework_data
-    }
-
-    fn executable(&self) -> String {
-        "cargo test".into()
-    }
-
-    fn suite_position_args(&self) -> Vec<String> {
-        vec!["suite".into()]
-    }
-
-    fn file_position_args(&self) -> Vec<String> {
-        vec!["suite".into()]
-    }
-
-    fn line_position_args(&self) -> Vec<String> {
-        vec!["line".into()]
     }
 }
