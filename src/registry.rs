@@ -70,7 +70,7 @@ impl Registry {
     pub fn new() -> Self {
         let mut registry = Self { frameworks: vec![] };
 
-        registry.add(Box::new(rust::CargoTest::default()));
+        registry.add(Box::new(rust::Cargotest::default()));
 
         registry
     }

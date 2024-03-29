@@ -1,16 +1,33 @@
 use proc_macro::TokenStream;
-use quote::quote;
+use quote::{format_ident, quote};
+use regex::{Captures, Regex};
 use syn::{parse_macro_input, DeriveInput};
+
+fn to_snake_case(value: String) -> String {
+    let re1 = Regex::new(r"([A-Z]+)([A-Z][a-z])").unwrap();
+    let re2 = Regex::new(r"([a-z]|\d)([A-Z])").unwrap();
+
+    let replaced1 = re1.replace_all(&value, |caps: &Captures| {
+        format!("{}_{}", &caps[1], &caps[2])
+    });
+
+    let replaced2 = re2.replace_all(&replaced1, |caps: &Captures| {
+        format!("{}_{}", &caps[1], &caps[2])
+    });
+
+    replaced2.to_lowercase()
+}
 
 #[proc_macro_derive(LanguageMeta)]
 pub fn derive_language_meta(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    let name = input.ident;
+    let language = input.ident;
+    let language_name = format_ident!("{}", to_snake_case(language.to_string()));
 
     let expanded = quote! {
-        impl LanguageMeta for #name {
+        impl LanguageMeta for #language {
             fn name(&self) -> &str {
-                &self.name
+                stringify!(#language_name)
             }
 
             fn env(&self) -> &EnvHashMap {
@@ -25,16 +42,17 @@ pub fn derive_language_meta(input: TokenStream) -> TokenStream {
 #[proc_macro_derive(TestFrameworkMeta)]
 pub fn derive_test_framework_meta(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    let name = input.ident;
+    let test_framework = input.ident;
+    let test_framework_name = format_ident!("{}", to_snake_case(test_framework.to_string()));
 
     let expanded = quote! {
-        impl TestFrameworkMeta for #name {
+        impl TestFrameworkMeta for #test_framework {
             fn language(&self) -> Box<&dyn Language> {
                 Box::new(&self.language)
             }
 
             fn name(&self) -> &str {
-                &self.name
+                stringify!(#test_framework_name)
             }
 
             fn pattern(&self) -> Result<Regex, Error> {
