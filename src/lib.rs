@@ -3,6 +3,8 @@ use std::error::Error;
 use std::path::PathBuf;
 use std::process::Command;
 
+mod registry;
+
 pub type Line = usize;
 
 #[derive(Debug)]
@@ -104,6 +106,12 @@ impl Context {
 pub fn build_command(scope: Scope, context: Context) -> Result<Command, Box<dyn Error>> {
     let mut command = Command::new("echo");
     command.current_dir(&context.root());
+
+    let registry = registry::Registry::new();
+
+    for framework in registry {
+        println!("{} - {}", framework.language(), framework.framework());
+    }
 
     match scope {
         Scope::Suite => command.args(["suite"]),
