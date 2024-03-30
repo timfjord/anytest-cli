@@ -4,6 +4,7 @@ use std::collections::HashMap;
 
 mod rust;
 
+type ArgsVec = Vec<String>;
 type EnvHashMap = HashMap<String, String>;
 
 pub trait LanguageMeta {
@@ -27,6 +28,8 @@ pub trait TestFrameworkMeta {
 
     fn default_program(&self) -> &str;
 
+    fn args(&self) -> &ArgsVec;
+
     fn env(&self) -> &EnvHashMap;
 }
 
@@ -45,21 +48,21 @@ pub trait TestFramework: TestFrameworkMeta {
         self.default_program()
     }
 
-    fn suite_position_args(&self, _context: &Context) -> Vec<String> {
+    fn suite_position_args(&self, _context: &Context) -> ArgsVec {
         vec![]
     }
 
-    fn file_position_args(&self, context: &Context) -> Vec<String> {
+    fn file_position_args(&self, context: &Context) -> ArgsVec {
         vec![context.path_str().into()]
     }
 
-    fn line_position_args(&self, context: &Context) -> Vec<String> {
+    fn line_position_args(&self, context: &Context) -> ArgsVec {
         let path_with_line = format!("{}:{}", context.path_str(), context.line().unwrap_or(1));
 
         vec![path_with_line]
     }
 
-    fn position_args(&self, scope: &Scope, context: &Context) -> Vec<String> {
+    fn position_args(&self, scope: &Scope, context: &Context) -> ArgsVec {
         match scope {
             Scope::Suite => self.suite_position_args(context),
             Scope::File => self.file_position_args(context),

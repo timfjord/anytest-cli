@@ -63,6 +63,10 @@ pub fn derive_test_framework_meta(input: TokenStream) -> TokenStream {
                 &self.program
             }
 
+            fn args(&self) -> &crate::registry::ArgsVec {
+                &self.args
+            }
+
             fn env(&self) -> &crate::registry::EnvHashMap {
                 &self.env
             }
