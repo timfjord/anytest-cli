@@ -59,6 +59,10 @@ pub fn derive_test_framework_meta(input: TokenStream) -> TokenStream {
                 regex::Regex::new(&self.pattern)
             }
 
+            fn default_program(&self) -> &str {
+                &self.program
+            }
+
             fn env(&self) -> &crate::registry::EnvHashMap {
                 &self.env
             }

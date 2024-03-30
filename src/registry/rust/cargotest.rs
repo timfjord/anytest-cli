@@ -6,6 +6,7 @@ use super::Rust;
 pub struct Cargotest {
     language: Rust,
     pattern: String,
+    program: String,
     env: EnvHashMap,
 }
 
@@ -14,13 +15,10 @@ impl Default for Cargotest {
         Self {
             language: Rust::default(),
             pattern: r".rs$".into(),
+            program: "cargo test".into(),
             env: Default::default(),
         }
     }
 }
 
-impl TestFramework for Cargotest {
-    fn executable(&self) -> String {
-        "cargo test".into()
-    }
-}
+impl TestFramework for Cargotest {}

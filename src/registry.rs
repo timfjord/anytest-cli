@@ -25,6 +25,8 @@ pub trait TestFrameworkMeta {
 
     fn pattern(&self) -> Result<Regex, Error>;
 
+    fn default_program(&self) -> &str;
+
     fn env(&self) -> &EnvHashMap;
 }
 
@@ -39,7 +41,9 @@ pub trait TestFramework: TestFrameworkMeta {
         }
     }
 
-    fn executable(&self) -> String;
+    fn program(&self) -> &str {
+        self.default_program()
+    }
 
     fn suite_position_args(&self, _context: &Context) -> Vec<String> {
         vec![]
