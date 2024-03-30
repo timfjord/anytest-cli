@@ -1,21 +1,11 @@
-use super::{EnvHashMap, Language, LanguageMeta};
+use super::{EnvHashMap, Language};
 
 // Test frameworks
 pub use cargotest::Cargotest;
 
 mod cargotest;
 
-#[derive(LanguageMeta)]
+#[derive(Language, Default)]
 struct Rust {
     env: EnvHashMap,
 }
-
-impl Default for Rust {
-    fn default() -> Self {
-        Self {
-            env: Default::default(),
-        }
-    }
-}
-
-impl Language for Rust {}

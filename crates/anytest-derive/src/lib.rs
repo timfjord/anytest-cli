@@ -18,14 +18,14 @@ fn to_snake_case(value: String) -> String {
     replaced2.to_lowercase()
 }
 
-#[proc_macro_derive(LanguageMeta)]
-pub fn derive_language_meta(input: TokenStream) -> TokenStream {
+#[proc_macro_derive(Language)]
+pub fn derive_language(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let language = input.ident;
     let language_name = format_ident!("{}", to_snake_case(language.to_string()));
 
     let expanded = quote! {
-        impl LanguageMeta for #language {
+        impl Language for #language {
             fn name(&self) -> &str {
                 stringify!(#language_name)
             }

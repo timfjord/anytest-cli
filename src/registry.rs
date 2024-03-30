@@ -7,13 +7,11 @@ mod rust;
 type ArgsVec = Vec<String>;
 type EnvHashMap = HashMap<String, String>;
 
-pub trait LanguageMeta {
+pub trait Language {
     fn name(&self) -> &str;
 
     fn env(&self) -> &EnvHashMap;
 }
-
-pub trait Language: LanguageMeta {}
 
 pub trait TestFrameworkMeta {
     fn language(&self) -> Box<&dyn Language>;
