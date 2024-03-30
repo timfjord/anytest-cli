@@ -1,5 +1,4 @@
-use crate::registry::{EnvHashMap, Language, TestFramework, TestFrameworkMeta};
-use regex::{Error, Regex};
+use crate::registry::{EnvHashMap, TestFramework, TestFrameworkMeta};
 
 use super::Rust;
 
@@ -10,12 +9,6 @@ pub struct Cargotest {
     env: EnvHashMap,
 }
 
-impl TestFramework for Cargotest {
-    fn executable(&self) -> String {
-        "cargo test".into()
-    }
-}
-
 impl Default for Cargotest {
     fn default() -> Self {
         Self {
@@ -23,5 +16,11 @@ impl Default for Cargotest {
             pattern: r".rs$".into(),
             env: Default::default(),
         }
+    }
+}
+
+impl TestFramework for Cargotest {
+    fn executable(&self) -> String {
+        "cargo test".into()
     }
 }

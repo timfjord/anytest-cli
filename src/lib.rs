@@ -117,6 +117,7 @@ pub fn build_command(scope: Scope, context: Context) -> Result<Command, Box<dyn 
     let registry = registry::Registry::new();
 
     for framework in registry {
+        println!("{}", framework.is_suitable_for(&context));
         println!("{} - {}", framework.language_name(), framework.name());
     }
 

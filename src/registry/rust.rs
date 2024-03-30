@@ -10,8 +10,6 @@ struct Rust {
     env: EnvHashMap,
 }
 
-impl Language for Rust {}
-
 impl Default for Rust {
     fn default() -> Self {
         Self {
@@ -19,3 +17,5 @@ impl Default for Rust {
         }
     }
 }
+
+impl Language for Rust {}

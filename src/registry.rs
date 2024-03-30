@@ -29,11 +29,13 @@ pub trait TestFrameworkMeta {
 }
 
 pub trait TestFramework: TestFrameworkMeta {
-    fn is_suitable_for(&self, context: Context) -> bool {
-        if let Ok(pattern) = self.pattern() {
-            pattern.is_match(context.path().to_str().unwrap_or_default())
-        } else {
-            false
+    fn is_suitable_for(&self, context: &Context) -> bool {
+        match self.pattern() {
+            Ok(pattern) => pattern.is_match(context.path().to_str().unwrap_or_default()),
+            Err(error) => {
+                log::warn!("{}", error);
+                false
+            }
         }
     }
 
