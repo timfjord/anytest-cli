@@ -11,3 +11,4 @@ clap = { version = "4.5.3", features = ["derive"] }
 regex = "1.10.3"
 anytest-derive = { path = "crates/anytest-derive" }
 log = "0.4.21"
+smart-default = "0.7.1"

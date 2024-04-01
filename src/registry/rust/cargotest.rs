@@ -1,26 +1,17 @@
 use crate::registry::{ArgsVec, EnvHashMap, TestFramework, TestFrameworkMeta};
+use smart_default::SmartDefault;
 
 use super::Rust;
 
-#[derive(TestFrameworkMeta)]
+#[derive(TestFrameworkMeta, SmartDefault)]
 pub struct Cargotest {
     language: Rust,
+    #[default = r".rs$"]
     pattern: String,
+    #[default = "cargo test"]
     program: String,
     args: ArgsVec,
     env: EnvHashMap,
-}
-
-impl Default for Cargotest {
-    fn default() -> Self {
-        Self {
-            language: Rust::default(),
-            pattern: r".rs$".into(),
-            program: "cargo test".into(),
-            args: ArgsVec::default(),
-            env: Default::default(),
-        }
-    }
 }
 
 impl TestFramework for Cargotest {}
