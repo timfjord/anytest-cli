@@ -1,4 +1,4 @@
-use anytest::{Context, Line, Scope};
+use anytest::{Context, LineNr, Scope};
 use clap::Parser;
 use regex::Regex;
 use std::error::Error;
@@ -38,7 +38,7 @@ impl Args {
         let path = caps.get(1).ok_or("Invalid path")?.as_str();
         let line = caps
             .get(2)
-            .map(|m| m.as_str().parse::<Line>())
+            .map(|m| m.as_str().parse::<LineNr>())
             .transpose()
             .unwrap_or(None);
 
