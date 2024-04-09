@@ -187,7 +187,7 @@ impl RelPath {
     pub fn lines(
         &self,
         range: impl ops::RangeBounds<LineNr>,
-    ) -> Result<Box<dyn Iterator<Item = (Result<String, io::Error>, LineNr)>>, Box<dyn Error>> {
+    ) -> Result<Box<dyn Iterator<Item = (String, LineNr)>>, Box<dyn Error>> {
         let numbers: LRange = LRange::try_from_range(&range)?;
         let mut buffer = self.open(numbers.forward_to())?;
 
@@ -202,7 +202,7 @@ impl RelPath {
             Box::new(buffer.lines())
         };
 
-        Ok(Box::new(lines.zip(numbers)))
+        Ok(Box::new(lines.map(Result::unwrap_or_default).zip(numbers)))
     }
 }
 
@@ -312,11 +312,10 @@ mod tests {
         root: &str,
         path: &str,
         range: impl ops::RangeBounds<LineNr>,
-    ) -> Result<Vec<String>, Box<dyn Error>> {
+    ) -> Result<Vec<(String, LineNr)>, Box<dyn Error>> {
         let lines = RelPath::new(Some(root), path)?
             .lines(range)?
-            .map(|(line, line_nr)| format!("{}: {}", line_nr, line.unwrap()))
-            .collect::<Vec<String>>();
+            .collect::<Vec<(String, LineNr)>>();
 
         Ok(lines)
     }
@@ -334,39 +333,73 @@ mod tests {
         assert_eq!(
             get_lines(folder.to_str().unwrap(), "file.rs", ..).unwrap(),
             vec![
-                "1: line1", "2: line2", "3: line3", "4: line4", "5: line5", "6: line6", "7: line7",
-                "8: line8", "9: line9"
+                (String::from("line1"), 1),
+                (String::from("line2"), 2),
+                (String::from("line3"), 3),
+                (String::from("line4"), 4),
+                (String::from("line5"), 5),
+                (String::from("line6"), 6),
+                (String::from("line7"), 7),
+                (String::from("line8"), 8),
+                (String::from("line9"), 9)
             ]
         );
 
         assert_eq!(
             get_lines(folder.to_str().unwrap(), "file.rs", ..5).unwrap(),
-            vec!["1: line1", "2: line2", "3: line3", "4: line4"]
+            vec![
+                (String::from("line1"), 1),
+                (String::from("line2"), 2),
+                (String::from("line3"), 3),
+                (String::from("line4"), 4)
+            ]
         );
 
         assert_eq!(
             get_lines(folder.to_str().unwrap(), "file.rs", 2..=6).unwrap(),
-            vec!["2: line2", "3: line3", "4: line4", "5: line5", "6: line6"]
+            vec![
+                (String::from("line2"), 2),
+                (String::from("line3"), 3),
+                (String::from("line4"), 4),
+                (String::from("line5"), 5),
+                (String::from("line6"), 6)
+            ]
         );
 
         assert_eq!(
             get_lines(folder.to_str().unwrap(), "file.rs", 7..).unwrap(),
-            vec!["7: line7", "8: line8", "9: line9"]
+            vec![
+                (String::from("line7"), 7),
+                (String::from("line8"), 8),
+                (String::from("line9"), 9)
+            ]
         );
 
         assert_eq!(
             get_lines(folder.to_str().unwrap(), "file.rs", 5..1).unwrap(),
-            vec!["5: line5", "4: line4", "3: line3", "2: line2"]
+            vec![
+                (String::from("line5"), 5),
+                (String::from("line4"), 4),
+                (String::from("line3"), 3),
+                (String::from("line2"), 2)
+            ]
         );
 
         assert_eq!(
             get_lines(folder.to_str().unwrap(), "file.rs", 6..=1).unwrap(),
-            vec!["6: line6", "5: line5", "4: line4", "3: line3", "2: line2", "1: line1"]
+            vec![
+                (String::from("line6"), 6),
+                (String::from("line5"), 5),
+                (String::from("line4"), 4),
+                (String::from("line3"), 3),
+                (String::from("line2"), 2),
+                (String::from("line1"), 1)
+            ]
         );
 
         assert_eq!(
             get_lines(folder.to_str().unwrap(), "file.rs", 1..=1).unwrap(),
-            vec!["1: line1"]
+            vec![(String::from("line1"), 1)]
         );
 
         let error = get_lines(folder.to_str().unwrap(), "file.rs", 0..5).unwrap_err();
