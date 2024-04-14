@@ -42,19 +42,23 @@ pub trait TestFramework: TestFrameworkMeta {
         }
     }
 
-    fn program(&self) -> &str {
-        self.default_program()
+    fn build_program(&self) -> String {
+        self.default_program().to_string()
     }
 
-    fn suite_position_args(&self, _context: &Context) -> ArgsVec {
+    fn program(&self) -> String {
+        self.build_program()
+    }
+
+    fn build_suite_position_args(&self, _context: &Context) -> ArgsVec {
         vec![]
     }
 
-    fn file_position_args(&self, context: &Context) -> ArgsVec {
+    fn build_file_position_args(&self, context: &Context) -> ArgsVec {
         vec![context.path_str().into()]
     }
 
-    fn line_position_args(&self, context: &Context) -> ArgsVec {
+    fn build_line_position_args(&self, context: &Context) -> ArgsVec {
         let path_with_line = format!("{}:{}", context.path_str(), context.line().unwrap_or(1));
 
         vec![path_with_line]
@@ -62,9 +66,9 @@ pub trait TestFramework: TestFrameworkMeta {
 
     fn position_args(&self, scope: &Scope, context: &Context) -> ArgsVec {
         match scope {
-            Scope::Suite => self.suite_position_args(context),
-            Scope::File => self.file_position_args(context),
-            Scope::Line => self.line_position_args(context),
+            Scope::Suite => self.build_suite_position_args(context),
+            Scope::File => self.build_file_position_args(context),
+            Scope::Line => self.build_line_position_args(context),
         }
     }
 }
