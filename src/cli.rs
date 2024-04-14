@@ -118,7 +118,7 @@ mod tests {
 
         assert_eq!(context.root(), &folder);
         assert_eq!(context.path(), &file);
-        assert_eq!(context.rel_path(), &PathBuf::from("test.rs"));
+        assert_eq!(context.rel(), &PathBuf::from("test.rs"));
         assert_eq!(context.line(), Some(123));
 
         let args = build_args(&folder, "test.rs:");
@@ -126,7 +126,7 @@ mod tests {
 
         assert_eq!(context.root(), &folder);
         assert_eq!(context.path(), &file);
-        assert_eq!(context.rel_path(), &PathBuf::from("test.rs"));
+        assert_eq!(context.rel(), &PathBuf::from("test.rs"));
         assert_eq!(context.line(), None);
 
         let args = build_args(&folder, "test.rs");
@@ -134,7 +134,7 @@ mod tests {
 
         assert_eq!(context.root(), &folder);
         assert_eq!(context.path(), &file);
-        assert_eq!(context.rel_path(), &PathBuf::from("test.rs"));
+        assert_eq!(context.rel(), &PathBuf::from("test.rs"));
         assert_eq!(context.line(), None);
     }
 

@@ -109,7 +109,7 @@ impl Iterator for LRange {
 pub struct RelPath {
     root: PathBuf,
     path: PathBuf,
-    rel_path: PathBuf,
+    rel: PathBuf,
 }
 
 impl RelPath {
@@ -147,7 +147,7 @@ impl RelPath {
         Ok(Self {
             root,
             path,
-            rel_path,
+            rel: rel_path,
         })
     }
 
@@ -159,8 +159,8 @@ impl RelPath {
         &self.path
     }
 
-    pub fn rel_path(&self) -> &PathBuf {
-        &self.rel_path
+    pub fn rel(&self) -> &PathBuf {
+        &self.rel
     }
 
     /// Opens the file and advances to the passed line.
@@ -271,7 +271,7 @@ mod tests {
 
         assert_eq!(*rel_path.root(), folder);
         assert_eq!(*rel_path.path(), file);
-        assert_eq!(*rel_path.rel_path(), PathBuf::from("file.rs"));
+        assert_eq!(*rel_path.rel(), PathBuf::from("file.rs"));
     }
 
     fn read_line(root: &str, path: &str, line: LineNr) -> Result<String, Box<dyn Error>> {

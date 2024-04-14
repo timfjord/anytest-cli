@@ -31,8 +31,8 @@ impl Context {
         &self.rel_path.path().to_str().unwrap_or_default()
     }
 
-    pub fn rel_path(&self) -> &PathBuf {
-        &self.rel_path.rel_path()
+    pub fn rel(&self) -> &PathBuf {
+        &self.rel_path.rel()
     }
 
     pub fn line(&self) -> Option<LineNr> {

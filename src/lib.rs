@@ -36,10 +36,10 @@ pub fn build_command(scope: Scope, context: Context) -> Result<Command, Box<dyn 
 
     match scope {
         Scope::Suite => command.args(["suite"]),
-        Scope::File => command.args(["file", context.rel_path().to_str().unwrap()]),
+        Scope::File => command.args(["file", context.rel().to_str().unwrap()]),
         Scope::Line => command.args([
             "line",
-            context.rel_path().to_str().unwrap(),
+            context.rel().to_str().unwrap(),
             context.line().unwrap_or(1).to_string().as_str(),
         ]),
     };
