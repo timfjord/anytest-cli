@@ -6,6 +6,7 @@ use std::fs::File;
 use std::mem;
 use std::path::PathBuf;
 use std::{
+    env,
     io::{self, BufRead, Seek},
     ops,
 };
@@ -114,14 +115,14 @@ pub struct RelPath {
 
 impl RelPath {
     pub fn new(root: Option<&str>, path: &str) -> Result<Self, Box<dyn Error>> {
-        let root = if let Some(root) = root {
+        let mut root = if let Some(root) = root {
             PathBuf::from(root)
         } else {
-            std::env::current_dir()?
+            env::current_dir()?
         };
 
         if !root.is_absolute() {
-            return Err("Root path must be absolute".into());
+            root = env::current_dir()?.join(root);
         }
 
         if !root.is_dir() {
@@ -243,7 +244,7 @@ mod tests {
 
         assert_eq!(
             rel_path_error("some_folder", ""),
-            "Root path must be absolute"
+            "Root path must be an existing directory"
         );
 
         assert_eq!(
