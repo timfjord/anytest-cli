@@ -1,4 +1,4 @@
-use super::{EnvHashMap, Language};
+use crate::{language::Language, EnvHashMap};
 
 // Test frameworks
 pub use cargotest::Cargotest;

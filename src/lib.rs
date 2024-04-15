@@ -1,4 +1,5 @@
 use clap::ValueEnum;
+use std::collections::HashMap;
 use std::error::Error;
 use std::process::Command;
 
@@ -9,10 +10,15 @@ pub use rel_path::RelPath;
 extern crate anytest_derive;
 
 mod context;
+mod language;
+mod named_pattern;
 mod registry;
 mod rel_path;
+mod test_framework;
 
 pub type LineNr = usize;
+pub type ArgsVec = Vec<String>;
+pub type EnvHashMap = HashMap<String, String>;
 
 #[derive(ValueEnum, Clone, Debug)]
 pub enum Scope {

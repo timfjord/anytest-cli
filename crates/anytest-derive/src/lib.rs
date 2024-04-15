@@ -30,7 +30,7 @@ pub fn derive_language(input: TokenStream) -> TokenStream {
                 stringify!(#language_name)
             }
 
-            fn env(&self) -> &crate::registry::EnvHashMap {
+            fn env(&self) -> &crate::EnvHashMap {
                 &self.env
             }
         }
@@ -47,7 +47,7 @@ pub fn derive_test_framework_meta(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         impl TestFrameworkMeta for #test_framework {
-            fn language(&self) -> Box<&dyn crate::registry::Language> {
+            fn language(&self) -> Box<&dyn crate::language::Language> {
                 Box::new(&self.language)
             }
 
@@ -63,12 +63,20 @@ pub fn derive_test_framework_meta(input: TokenStream) -> TokenStream {
                 &self.program
             }
 
-            fn args(&self) -> &crate::registry::ArgsVec {
+            fn args(&self) -> &crate::ArgsVec {
                 &self.args
             }
 
-            fn env(&self) -> &crate::registry::EnvHashMap {
+            fn env(&self) -> &crate::EnvHashMap {
                 &self.env
+            }
+
+            fn test_pattern(&self) -> &str {
+                &self.test_pattern
+            }
+
+            fn namespace_pattern(&self) -> &str {
+                &self.namespace_pattern
             }
         }
     };

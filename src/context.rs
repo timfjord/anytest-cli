@@ -1,10 +1,5 @@
+use crate::{named_pattern::NamedPattern, LineNr, RelPath};
 use std::{error::Error, ops, path::PathBuf};
-
-use crate::{LineNr, RelPath};
-
-use self::named_pattern::NamedPattern;
-
-mod named_pattern;
 
 pub struct Nearest {
     tests: Vec<String>,
@@ -66,10 +61,14 @@ impl Context {
 
     pub fn find_nearest(
         &self,
-        test_patterns: Vec<Box<dyn NamedPattern>>,
-        namespace_patters: Vec<Box<dyn NamedPattern>>,
+        test_patterns: &[NamedPattern],
+        namespace_patters: &[NamedPattern],
         range: impl ops::RangeBounds<LineNr>,
     ) -> Result<Nearest, Box<dyn Error>> {
+        if test_patterns.is_empty() {
+            return Err("Test patterns are empty".into());
+        }
+
         let mut tests: Vec<String> = Vec::new();
         let mut namespaces: Vec<String> = Vec::new();
         // let names: Vec<String> = Vec::new();
@@ -145,8 +144,8 @@ mod tests {
     fn find_nearest(
         root: &str,
         path: &str,
-        test_patterns: Vec<Box<dyn NamedPattern>>,
-        namespace_patters: Vec<Box<dyn NamedPattern>>,
+        test_patterns: &[NamedPattern],
+        namespace_patters: &[NamedPattern],
         range: impl ops::RangeBounds<LineNr>,
     ) -> Nearest {
         Context::new(Some(root), path, None)
@@ -168,8 +167,8 @@ mod tests {
         let nearest = find_nearest(
             dir.to_str().unwrap(),
             "folder/file.rb",
-            vec![Box::new(r"^\s*def\s+(test_\w+)".to_string())],
-            vec![Box::new(r"^\s*(?:class|module)\s+(\S+)".to_string())],
+            &[r"^\s*def\s+(test_\w+)".into()],
+            &[r"^\s*(?:class|module)\s+(\S+)".into()],
             2..=1,
         );
 
