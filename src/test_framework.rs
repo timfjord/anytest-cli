@@ -54,21 +54,21 @@ pub trait TestFramework: TestFrameworkMeta {
         self.build_program()
     }
 
-    fn build_suite_position_args(&self, _context: &Context) -> ArgsVec {
-        vec![]
+    fn build_suite_position_args(&self, _context: &Context) -> Result<ArgsVec, Box<dyn Error>> {
+        Ok(vec![])
     }
 
-    fn build_file_position_args(&self, context: &Context) -> ArgsVec {
-        vec![context.path_str().into()]
+    fn build_file_position_args(&self, context: &Context) -> Result<ArgsVec, Box<dyn Error>> {
+        Ok(vec![context.path_str().into()])
     }
 
-    fn build_line_position_args(&self, context: &Context) -> ArgsVec {
+    fn build_line_position_args(&self, context: &Context) -> Result<ArgsVec, Box<dyn Error>> {
         let path_with_line = format!("{}:{}", context.path_str(), context.line().unwrap_or(1));
 
-        vec![path_with_line]
+        Ok(vec![path_with_line])
     }
 
-    fn position_args(&self, scope: &Scope, context: &Context) -> ArgsVec {
+    fn position_args(&self, scope: &Scope, context: &Context) -> Result<ArgsVec, Box<dyn Error>> {
         match scope {
             Scope::Suite => self.build_suite_position_args(context),
             Scope::File => self.build_file_position_args(context),
