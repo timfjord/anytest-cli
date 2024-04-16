@@ -1,3 +1,4 @@
+use super::Rust;
 use crate::{
     test_framework::{TestFramework, TestFrameworkMeta},
     ArgsList, EnvVars,
@@ -6,8 +7,6 @@ use regex::Regex;
 use smart_default::SmartDefault;
 use std::iter;
 use std::path;
-
-use super::Rust;
 
 const SEPARATOR: &str = "::";
 
@@ -29,9 +28,9 @@ pub struct Cargotest {
     forward_test_pattern: String,
 }
 
-impl Cargotest {}
-
 impl TestFramework for Cargotest {
+    // TODO: Refactor this method, since it is almost the exact adaptation of the Python implementation
+    //       (which is the adaptation of the Vimscript implementation).
     fn build_file_position_args(
         &self,
         context: &crate::Context,

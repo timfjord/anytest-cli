@@ -1,4 +1,4 @@
-use anytest::{self, Scope};
+use anytest::{self, Context, LineNr, Scope};
 use std::{env, path::PathBuf};
 
 pub struct Project {
@@ -15,8 +15,8 @@ impl Project {
         Self { root }
     }
 
-    fn test(&self, file: &str, line: Option<anytest::LineNr>, scope: Scope) -> String {
-        let context = anytest::Context::new(
+    fn test(&self, file: &str, line: Option<LineNr>, scope: Scope) -> String {
+        let context = Context::new(
             Some(self.root.to_str().unwrap()),
             file,
             line,
