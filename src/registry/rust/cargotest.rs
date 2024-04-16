@@ -4,8 +4,12 @@ use crate::{
 };
 use regex::Regex;
 use smart_default::SmartDefault;
+use std::iter;
+use std::path;
 
 use super::Rust;
+
+const SEPARATOR: &'static str = "::";
 
 #[derive(TestFrameworkMeta, SmartDefault)]
 pub struct Cargotest {
@@ -25,9 +29,7 @@ pub struct Cargotest {
     forward_test_pattern: String,
 }
 
-impl Cargotest {
-    const NEAREST_SEPARATOR: &'static str = "::";
-}
+impl Cargotest {}
 
 impl TestFramework for Cargotest {
     fn build_file_position_args(
@@ -56,7 +58,7 @@ impl TestFramework for Cargotest {
                 .take(i)
                 .chain(std::iter::once(super::MANIFEST_FILE.into()))
                 .collect::<Vec<String>>()
-                .join(std::path::MAIN_SEPARATOR.to_string().as_str());
+                .join(path::MAIN_SEPARATOR.to_string().as_str());
             if context.root().join(parts).exists() {
                 args.push("--package".to_string());
                 args.push(modules[i - 1].to_string());
@@ -64,20 +66,44 @@ impl TestFramework for Cargotest {
             }
         }
 
-        if modules[0] == "tests" && modules.len() == 2 || modules.len() <= 1 {
+        if modules.len() == 2 && modules[0] == "tests" || modules.len() <= 1 {
             return Ok(args);
         }
 
-        let namespace = modules
-            .into_iter()
-            .skip(1)
-            .chain(std::iter::once("".into()))
-            .collect::<Vec<String>>()
-            .join(Self::NEAREST_SEPARATOR);
+        let namespace = [&modules[1..], &["".into()]].concat().join(SEPARATOR);
         Ok(args
             .iter()
-            .chain(std::iter::once(&namespace))
+            .chain(iter::once(&namespace))
             .map(|s| s.to_string())
+            .collect())
+    }
+
+    fn build_line_position_args(
+        &self,
+        context: &crate::Context,
+    ) -> Result<ArgsList, Box<dyn std::error::Error>> {
+        let mut args = self.build_file_position_args(context)?;
+        let nearest = self.find_nearest(&context)?;
+
+        if !nearest.has_tests() || !Regex::new(r"#\[.*")?.is_match(&nearest.tests()[0]) {
+            return Ok(args);
+        }
+
+        let forward_nearest = context.find_nearest(
+            &vec![self.forward_test_pattern.as_str().into()],
+            Default::default(),
+            nearest.line_nr().unwrap()..=context.line_nr().unwrap(),
+        )?;
+        let test_name = [&nearest.namespaces()[0..1], &forward_nearest.tests()[0..1]]
+            .concat()
+            .join(SEPARATOR);
+        let file_namespace = args.pop().unwrap_or_default();
+
+        Ok(args
+            .into_iter()
+            .chain(iter::once(format!("{}{}", file_namespace, test_name)))
+            .chain(iter::once("--".into()))
+            .chain(iter::once("--exact".into()))
             .collect())
     }
 }

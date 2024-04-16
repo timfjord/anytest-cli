@@ -28,6 +28,10 @@ impl Nearest {
     pub fn line_nr(&self) -> Option<LineNr> {
         self.line_nr
     }
+
+    pub fn has_tests(&self) -> bool {
+        !self.tests.is_empty()
+    }
 }
 
 #[derive(Debug)]
@@ -166,7 +170,12 @@ mod tests {
         }
     }
 
-    fn get_scope(root: &PathBuf, path: &PathBuf, line: Option<LineNr>, scope: Option<Scope>) -> Scope {
+    fn get_scope(
+        root: &PathBuf,
+        path: &PathBuf,
+        line: Option<LineNr>,
+        scope: Option<Scope>,
+    ) -> Scope {
         let context = Context::new(
             Some(root.to_str().unwrap()),
             path.to_str().unwrap(),
@@ -185,8 +194,14 @@ mod tests {
 
         File::create(&file).unwrap();
 
-        assert!(matches!(get_scope(&folder, &file, Some(123), None), Scope::Line));
-        assert!(matches!(get_scope(&folder, &file, Some(123), Some(Scope::Suite)), Scope::Suite));
+        assert!(matches!(
+            get_scope(&folder, &file, Some(123), None),
+            Scope::Line
+        ));
+        assert!(matches!(
+            get_scope(&folder, &file, Some(123), Some(Scope::Suite)),
+            Scope::Suite
+        ));
         assert!(matches!(get_scope(&folder, &file, None, None), Scope::File));
     }
 
