@@ -9,7 +9,7 @@ use std::path;
 
 use super::Rust;
 
-const SEPARATOR: &'static str = "::";
+const SEPARATOR: &str = "::";
 
 #[derive(TestFrameworkMeta, SmartDefault)]
 pub struct Cargotest {
@@ -83,14 +83,14 @@ impl TestFramework for Cargotest {
         context: &crate::Context,
     ) -> Result<ArgsList, Box<dyn std::error::Error>> {
         let mut args = self.build_file_position_args(context)?;
-        let nearest = self.find_nearest(&context)?;
+        let nearest = self.find_nearest(context)?;
 
         if !nearest.has_tests() || !Regex::new(r"#\[.*")?.is_match(&nearest.tests()[0]) {
             return Ok(args);
         }
 
         let forward_nearest = context.find_nearest(
-            &vec![self.forward_test_pattern.as_str().into()],
+            &[self.forward_test_pattern.as_str().into()],
             Default::default(),
             nearest.line_nr().unwrap()..=context.line_nr().unwrap(),
         )?;

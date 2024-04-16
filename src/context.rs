@@ -51,7 +51,7 @@ impl Context {
         let rel_path = RelPath::new(root, path)?;
         let scope = if let Some(scope) = scope {
             scope
-        } else if let Some(_) = line_nr {
+        } else if line_nr.is_some() {
             Scope::Line
         } else {
             Scope::File
@@ -65,19 +65,19 @@ impl Context {
     }
 
     pub fn root(&self) -> &PathBuf {
-        &self.rel_path.root()
+        self.rel_path.root()
     }
 
     pub fn path(&self) -> &PathBuf {
-        &self.rel_path.path()
+        self.rel_path.path()
     }
 
     pub fn rel(&self) -> &PathBuf {
-        &self.rel_path.rel()
+        self.rel_path.rel()
     }
 
     pub fn rel_str(&self) -> &str {
-        &self.rel().to_str().unwrap_or_default()
+        self.rel().to_str().unwrap_or_default()
     }
 
     pub fn line_nr(&self) -> Option<LineNr> {
