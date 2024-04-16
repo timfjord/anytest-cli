@@ -62,6 +62,7 @@ impl TestFramework for Cargotest {
             if context.root().join(parts).exists() {
                 args.push("--package".to_string());
                 args.push(modules[i - 1].to_string());
+                modules.drain(0..i);
                 break;
             }
         }
@@ -94,9 +95,15 @@ impl TestFramework for Cargotest {
             Default::default(),
             nearest.line_nr().unwrap()..=context.line_nr().unwrap(),
         )?;
-        let test_name = [&nearest.namespaces()[0..1], &forward_nearest.tests()[0..1]]
-            .concat()
-            .join(SEPARATOR);
+        let test_name = if nearest.namespaces().is_empty() {
+            forward_nearest.tests().get(0).unwrap().to_string()
+        } else if forward_nearest.tests().is_empty() {
+            nearest.tests().get(0).unwrap().to_string()
+        } else {
+            [&nearest.namespaces()[0..1], &forward_nearest.tests()[0..1]]
+                .concat()
+                .join(SEPARATOR)
+        };
         let file_namespace = args.pop().unwrap_or_default();
 
         Ok(args

@@ -2,7 +2,6 @@ use anytest::{Context, LineNr, Scope};
 use clap::Parser;
 use regex::Regex;
 use std::error::Error;
-use std::process::Command;
 
 const PATH_REGEX: &str = r"^(.*?)(?::(\d*))?$";
 
@@ -50,24 +49,12 @@ impl Args {
     }
 }
 
-pub fn format_command(command: &Command) -> String {
-    format!(
-        "{} {}",
-        command.get_program().to_str().unwrap_or_default(),
-        command
-            .get_args()
-            .map(|a| a.to_str().unwrap_or_default())
-            .collect::<Vec<&str>>()
-            .join(" ")
-    )
-}
-
 #[cfg(test)]
 mod tests {
     use std::{
         env,
         fs::{self, File},
-        path::PathBuf,
+        path::PathBuf
     };
 
     use super::*;
@@ -129,13 +116,5 @@ mod tests {
         assert_eq!(context.rel(), &PathBuf::from("test.rs"));
         assert_eq!(context.line_nr(), None);
         assert!(matches!(context.scope(), &Scope::File));
-    }
-
-    #[test]
-    fn test_format_command() {
-        let mut command = Command::new("echo");
-        command.arg("Hello,").arg("World!");
-
-        assert_eq!(format_command(&command), "echo Hello, World!");
     }
 }

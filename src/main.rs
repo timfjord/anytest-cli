@@ -1,5 +1,5 @@
 use clap::Parser;
-use cli::{format_command, Args};
+use cli::Args;
 use std::error::Error;
 use std::io::{self, Write};
 
@@ -11,7 +11,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut command = anytest::build_command(&context)?;
 
     if args.is_dry_run() {
-        println!("{}", format_command(&command));
+        println!("{}", anytest::format_command(&command));
     } else {
         let output = command.output()?;
 
