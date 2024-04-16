@@ -1,9 +1,9 @@
-use clap::ValueEnum;
 use std::collections::HashMap;
 use std::error::Error;
 use std::process::Command;
 
 pub use context::Context;
+pub use context::Scope;
 pub use rel_path::RelPath;
 
 #[macro_use]
@@ -17,38 +17,20 @@ mod rel_path;
 mod test_framework;
 
 pub type LineNr = usize;
-pub type ArgsVec = Vec<String>;
-pub type EnvHashMap = HashMap<String, String>;
+pub type ArgsList = Vec<String>;
+pub type EnvVars = HashMap<String, String>;
 
-#[derive(ValueEnum, Clone, Debug)]
-pub enum Scope {
-    Suite,
-    File,
-    Line,
-}
-
-pub fn build_command(scope: Scope, context: Context) -> Result<Command, Box<dyn Error>> {
-    let mut command = Command::new("echo");
-    command.current_dir(&context.root());
-
+pub fn build_command(context: &Context) -> Result<Command, Box<dyn Error>> {
     let registry = registry::Registry::new();
+    let test_framework = registry.find(context)?;
+    let (program, program_args) = test_framework.program()?;
+    let mut command = Command::new(program);
 
-    for framework in registry {
-        if framework.is_suitable_for(&context) {
-            println!("{}", framework.program());
-            println!("{} - {}", framework.language_name(), framework.name());
-        }
-    }
-
-    match scope {
-        Scope::Suite => command.args(["suite"]),
-        Scope::File => command.args(["file", context.rel().to_str().unwrap()]),
-        Scope::Line => command.args([
-            "line",
-            context.rel().to_str().unwrap(),
-            context.line().unwrap_or(1).to_string().as_str(),
-        ]),
-    };
+    command.current_dir(context.root());
+    command.args(program_args);
+    command.args(test_framework.args());
+    command.args(test_framework.position_args(&context)?);
+    command.envs(test_framework.env());
 
     Ok(command)
 }

@@ -30,7 +30,7 @@ pub fn derive_language(input: TokenStream) -> TokenStream {
                 stringify!(#language_name)
             }
 
-            fn env(&self) -> &crate::EnvHashMap {
+            fn env(&self) -> &crate::EnvVars {
                 &self.env
             }
         }
@@ -63,11 +63,11 @@ pub fn derive_test_framework_meta(input: TokenStream) -> TokenStream {
                 &self.program
             }
 
-            fn args(&self) -> &crate::ArgsVec {
+            fn args(&self) -> &crate::ArgsList {
                 &self.args
             }
 
-            fn env(&self) -> &crate::EnvHashMap {
+            fn env(&self) -> &crate::EnvVars {
                 &self.env
             }
 

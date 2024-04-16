@@ -1,6 +1,6 @@
 use crate::{
-    context::Nearest, language::Language, named_pattern::NamedPattern, ArgsVec, Context,
-    EnvHashMap, Scope,
+    context::Nearest, language::Language, named_pattern::NamedPattern, ArgsList, Context, EnvVars,
+    Scope,
 };
 use regex::Regex;
 use std::error::Error;
@@ -18,9 +18,9 @@ pub trait TestFrameworkMeta {
 
     fn default_program(&self) -> &str;
 
-    fn args(&self) -> &ArgsVec;
+    fn args(&self) -> &ArgsList;
 
-    fn env(&self) -> &EnvHashMap;
+    fn env(&self) -> &EnvVars;
 
     fn test_pattern(&self) -> &str;
 
@@ -50,26 +50,30 @@ pub trait TestFramework: TestFrameworkMeta {
         self.default_program().to_string()
     }
 
-    fn program(&self) -> String {
-        self.build_program()
+    fn program(&self) -> Result<(String, ArgsList), Box<dyn Error>> {
+        let raw_program = self.build_program();
+        let mut parts = raw_program.split_whitespace().map(str::to_string);
+        let program = parts.next().ok_or("Program must be present")?;
+
+        Ok((program, parts.collect()))
     }
 
-    fn build_suite_position_args(&self, _context: &Context) -> Result<ArgsVec, Box<dyn Error>> {
+    fn build_suite_position_args(&self, _context: &Context) -> Result<ArgsList, Box<dyn Error>> {
         Ok(vec![])
     }
 
-    fn build_file_position_args(&self, context: &Context) -> Result<ArgsVec, Box<dyn Error>> {
-        Ok(vec![context.path_str().into()])
+    fn build_file_position_args(&self, context: &Context) -> Result<ArgsList, Box<dyn Error>> {
+        Ok(vec![context.rel_str().into()])
     }
 
-    fn build_line_position_args(&self, context: &Context) -> Result<ArgsVec, Box<dyn Error>> {
-        let path_with_line = format!("{}:{}", context.path_str(), context.line().unwrap_or(1));
+    fn build_line_position_args(&self, context: &Context) -> Result<ArgsList, Box<dyn Error>> {
+        let path_with_line = format!("{}:{}", context.rel_str(), context.line_nr().unwrap_or(1));
 
         Ok(vec![path_with_line])
     }
 
-    fn position_args(&self, scope: &Scope, context: &Context) -> Result<ArgsVec, Box<dyn Error>> {
-        match scope {
+    fn position_args(&self, context: &Context) -> Result<ArgsList, Box<dyn Error>> {
+        match context.scope() {
             Scope::Suite => self.build_suite_position_args(context),
             Scope::File => self.build_file_position_args(context),
             Scope::Line => self.build_line_position_args(context),
@@ -77,7 +81,7 @@ pub trait TestFramework: TestFrameworkMeta {
     }
 
     fn find_nearest(&self, context: &Context) -> Result<Nearest, Box<dyn Error>> {
-        if let Some(line) = context.line() {
+        if let Some(line) = context.line_nr() {
             context.find_nearest(&self.test_patterns(), &self.namespace_patterns(), line..=1)
         } else {
             Err("Line number is required".into())

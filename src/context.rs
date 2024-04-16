@@ -1,5 +1,13 @@
 use crate::{named_pattern::NamedPattern, LineNr, RelPath};
+use clap::ValueEnum;
 use std::{error::Error, ops, path::PathBuf};
+
+#[derive(ValueEnum, Clone, Debug)]
+pub enum Scope {
+    Suite,
+    File,
+    Line,
+}
 
 pub struct Nearest {
     tests: Vec<String>,
@@ -26,6 +34,7 @@ impl Nearest {
 pub struct Context {
     rel_path: RelPath,
     line_nr: Option<LineNr>,
+    scope: Scope,
 }
 
 impl Context {
@@ -33,10 +42,22 @@ impl Context {
         root: Option<&str>,
         path: &str,
         line_nr: Option<LineNr>,
+        scope: Option<Scope>,
     ) -> Result<Self, Box<dyn Error>> {
         let rel_path = RelPath::new(root, path)?;
+        let scope = if let Some(scope) = scope {
+            scope
+        } else if let Some(_) = line_nr {
+            Scope::Line
+        } else {
+            Scope::File
+        };
 
-        Ok(Self { rel_path, line_nr })
+        Ok(Self {
+            rel_path,
+            line_nr,
+            scope,
+        })
     }
 
     pub fn root(&self) -> &PathBuf {
@@ -47,16 +68,20 @@ impl Context {
         &self.rel_path.path()
     }
 
-    pub fn path_str(&self) -> &str {
-        &self.rel_path.path().to_str().unwrap_or_default()
-    }
-
     pub fn rel(&self) -> &PathBuf {
         &self.rel_path.rel()
     }
 
-    pub fn line(&self) -> Option<LineNr> {
+    pub fn rel_str(&self) -> &str {
+        &self.rel().to_str().unwrap_or_default()
+    }
+
+    pub fn line_nr(&self) -> Option<LineNr> {
         self.line_nr
+    }
+
+    pub fn scope(&self) -> &Scope {
+        &self.scope
     }
 
     pub fn find_nearest(
@@ -141,6 +166,30 @@ mod tests {
         }
     }
 
+    fn get_scope(root: &PathBuf, path: &PathBuf, line: Option<LineNr>, scope: Option<Scope>) -> Scope {
+        let context = Context::new(
+            Some(root.to_str().unwrap()),
+            path.to_str().unwrap(),
+            line,
+            scope,
+        )
+        .unwrap();
+        context.scope().clone()
+    }
+
+    #[test]
+    fn test_context_new() {
+        let dir = env::temp_dir();
+        let folder = create_folder(&dir, "folder").unwrap();
+        let file = folder.join("file.rb");
+
+        File::create(&file).unwrap();
+
+        assert!(matches!(get_scope(&folder, &file, Some(123), None), Scope::Line));
+        assert!(matches!(get_scope(&folder, &file, Some(123), Some(Scope::Suite)), Scope::Suite));
+        assert!(matches!(get_scope(&folder, &file, None, None), Scope::File));
+    }
+
     fn find_nearest(
         root: &str,
         path: &str,
@@ -148,7 +197,7 @@ mod tests {
         namespace_patters: &[NamedPattern],
         range: impl ops::RangeBounds<LineNr>,
     ) -> Nearest {
-        Context::new(Some(root), path, None)
+        Context::new(Some(root), path, None, None)
             .unwrap()
             .find_nearest(test_patterns, namespace_patters, range)
             .unwrap()

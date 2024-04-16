@@ -36,23 +36,13 @@ impl Args {
         let re = Regex::new(PATH_REGEX)?;
         let caps = re.captures(&self.path).ok_or("Invalid path")?;
         let path = caps.get(1).ok_or("Invalid path")?.as_str();
-        let line = caps
+        let line_nr = caps
             .get(2)
             .map(|m| m.as_str().parse::<LineNr>())
             .transpose()
             .unwrap_or(None);
 
-        Context::new(self.root.as_deref(), path, line)
-    }
-
-    pub fn scope(&self, context: &Context) -> Scope {
-        if let Some(scope) = &self.scope {
-            scope.clone()
-        } else if let Some(_) = context.line() {
-            Scope::Line
-        } else {
-            Scope::File
-        }
+        Context::new(self.root.as_deref(), path, line_nr, self.scope.clone())
     }
 
     pub fn is_dry_run(&self) -> bool {
@@ -119,7 +109,8 @@ mod tests {
         assert_eq!(context.root(), &folder);
         assert_eq!(context.path(), &file);
         assert_eq!(context.rel(), &PathBuf::from("test.rs"));
-        assert_eq!(context.line(), Some(123));
+        assert_eq!(context.line_nr(), Some(123));
+        assert!(matches!(context.scope(), &Scope::Line));
 
         let args = build_args(&folder, "test.rs:");
         let context = args.to_context().unwrap();
@@ -127,7 +118,8 @@ mod tests {
         assert_eq!(context.root(), &folder);
         assert_eq!(context.path(), &file);
         assert_eq!(context.rel(), &PathBuf::from("test.rs"));
-        assert_eq!(context.line(), None);
+        assert_eq!(context.line_nr(), None);
+        assert!(matches!(context.scope(), &Scope::File));
 
         let args = build_args(&folder, "test.rs");
         let context = args.to_context().unwrap();
@@ -135,25 +127,8 @@ mod tests {
         assert_eq!(context.root(), &folder);
         assert_eq!(context.path(), &file);
         assert_eq!(context.rel(), &PathBuf::from("test.rs"));
-        assert_eq!(context.line(), None);
-    }
-
-    #[test]
-    fn test_args_scope() {
-        let (folder, _) = init("folder", "test.rs");
-
-        let mut args = build_args(&folder, "test.rs:123");
-        let context = args.to_context().unwrap();
-
-        assert!(matches!(args.scope(&context), Scope::Line));
-
-        args.scope = Some(Scope::Suite);
-        assert!(matches!(args.scope(&context), Scope::Suite));
-
-        let args = build_args(&folder, "test.rs");
-        let context = args.to_context().unwrap();
-
-        assert!(matches!(args.scope(&context), Scope::File));
+        assert_eq!(context.line_nr(), None);
+        assert!(matches!(context.scope(), &Scope::File));
     }
 
     #[test]

@@ -1,4 +1,4 @@
-use crate::test_framework::TestFramework;
+use crate::{test_framework::TestFramework, Context};
 
 mod rust;
 
@@ -18,13 +18,17 @@ impl Registry {
     fn add(&mut self, framework: Box<dyn TestFramework>) {
         self.frameworks.push(framework);
     }
-}
 
-impl IntoIterator for Registry {
-    type Item = Box<dyn TestFramework>;
-    type IntoIter = std::vec::IntoIter<Self::Item>;
+    pub fn find(
+        &self,
+        context: &Context,
+    ) -> Result<&dyn TestFramework, Box<dyn std::error::Error>> {
+        for framework in &self.frameworks {
+            if framework.is_suitable_for(context) {
+                return Ok(framework.as_ref());
+            }
+        }
 
-    fn into_iter(self) -> Self::IntoIter {
-        self.frameworks.into_iter()
+        Err("No suitable test framework found".into())
     }
 }

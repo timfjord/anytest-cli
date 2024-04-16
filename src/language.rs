@@ -1,7 +1,7 @@
-use crate::EnvHashMap;
+use crate::EnvVars;
 
 pub trait Language {
     fn name(&self) -> &str;
 
-    fn env(&self) -> &EnvHashMap;
+    fn env(&self) -> &EnvVars;
 }
