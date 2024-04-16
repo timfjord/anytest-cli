@@ -1,0 +1,34 @@
+use crate::{test_framework::TestFramework, Context};
+
+mod rust;
+
+pub struct Registry {
+    frameworks: Vec<Box<dyn TestFramework>>,
+}
+
+impl Registry {
+    pub fn new() -> Self {
+        let mut registry = Self { frameworks: vec![] };
+
+        registry.add(Box::<rust::Cargotest>::default());
+
+        registry
+    }
+
+    fn add(&mut self, framework: Box<dyn TestFramework>) {
+        self.frameworks.push(framework);
+    }
+
+    pub fn find(
+        &self,
+        context: &Context,
+    ) -> Result<&dyn TestFramework, Box<dyn std::error::Error>> {
+        for framework in &self.frameworks {
+            if framework.is_suitable_for(context) {
+                return Ok(framework.as_ref());
+            }
+        }
+
+        Err("No suitable test framework found".into())
+    }
+}
