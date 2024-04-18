@@ -14,6 +14,7 @@ mod named_pattern;
 mod registry;
 mod rel_path;
 mod test_framework;
+mod utils;
 
 pub type LineNr = usize;
 pub type ArgsList = Vec<String>;

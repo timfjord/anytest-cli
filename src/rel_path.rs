@@ -164,6 +164,10 @@ impl RelPath {
         &self.rel
     }
 
+    pub fn rel_str(&self) -> &str {
+        self.rel().to_str().unwrap_or_default()
+    }
+
     /// Opens the file and advances to the passed line.
     pub fn open(&self, line: LineNr) -> Result<io::BufReader<File>, io::Error> {
         let file = File::open(self.path())?;
@@ -204,6 +208,10 @@ impl RelPath {
         };
 
         Ok(Box::new(lines.map(Result::unwrap_or_default).zip(numbers)))
+    }
+
+    pub fn file(&self, path: &str) -> Result<Self, Box<dyn Error>> {
+        Self::new(Some(self.root().to_str().ok_or("Invalid root path")?), path)
     }
 }
 

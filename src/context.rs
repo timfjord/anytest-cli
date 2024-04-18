@@ -77,7 +77,7 @@ impl Context {
     }
 
     pub fn rel_str(&self) -> &str {
-        self.rel().to_str().unwrap_or_default()
+        self.rel_path.rel_str()
     }
 
     pub fn line_nr(&self) -> Option<LineNr> {
@@ -146,6 +146,14 @@ impl Context {
             namespaces,
             line_nr: test_line_nr,
         })
+    }
+
+    pub fn find_file(&self, rel_path: &str) -> Option<RelPath> {
+        if let Ok(rel_path) = self.rel_path.file(rel_path) {
+            Some(rel_path)
+        } else {
+            None
+        }
     }
 }
 

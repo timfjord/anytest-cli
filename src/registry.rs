@@ -1,6 +1,6 @@
 use crate::{test_framework::TestFramework, Context};
 
-// mod ruby;
+mod ruby;
 mod rust;
 
 pub struct Registry {
@@ -11,7 +11,7 @@ impl Registry {
     pub fn new() -> Self {
         let mut registry = Self { frameworks: vec![] };
 
-        // registry.add(Box::<ruby::RSpec>::default());
+        registry.add(Box::<ruby::RSpec>::default());
         registry.add(Box::<rust::Cargotest>::default());
 
         registry
