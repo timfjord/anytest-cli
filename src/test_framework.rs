@@ -1,6 +1,5 @@
 use crate::{
-    context::Nearest, language::Language, named_pattern::NamedPattern, ArgsList, Context,
-    Scope,
+    context::Nearest, language::Language, named_pattern::NamedPattern, ArgsList, Context, Scope,
 };
 use regex::Regex;
 use std::error::Error;
@@ -16,7 +15,7 @@ pub trait TestFrameworkMeta {
 
     fn pattern(&self) -> Result<Regex, regex::Error>;
 
-    fn default_program(&self) -> &str;
+    fn default_executable(&self) -> Option<ArgsList>;
 
     fn test_pattern(&self) -> &str;
 
@@ -42,16 +41,13 @@ pub trait TestFramework: TestFrameworkMeta {
         }
     }
 
-    fn build_program(&self) -> String {
-        self.default_program().to_string()
+    fn build_executable(&self, _context: &Context) -> ArgsList {
+        vec![]
     }
 
-    fn program(&self) -> Result<(String, ArgsList), Box<dyn Error>> {
-        let raw_program = self.build_program();
-        let mut parts = raw_program.split_whitespace().map(str::to_string);
-        let program = parts.next().ok_or("Program must be present")?;
-
-        Ok((program, parts.collect()))
+    fn executable(&self, context: &Context) -> ArgsList {
+        self.default_executable()
+            .unwrap_or(self.build_executable(context))
     }
 
     fn build_suite_position_args(&self, _context: &Context) -> Result<ArgsList, Box<dyn Error>> {

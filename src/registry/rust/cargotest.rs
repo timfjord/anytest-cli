@@ -15,8 +15,8 @@ pub struct Cargotest {
     language: Rust,
     #[default = r".rs$"]
     pattern: String,
-    #[default = "cargo test"]
-    program: String,
+    #[default(_code = r#"vec!["cargo", "test"]"#)]
+    executable: Vec<&'static str>,
     #[default = r"(#\[(?:\w+::|rs)?test)"]
     test_pattern: String,
     #[default = r"mod (tests?)"]

@@ -55,8 +55,12 @@ pub fn derive_test_framework_meta(input: TokenStream) -> TokenStream {
                 regex::Regex::new(&self.pattern)
             }
 
-            fn default_program(&self) -> &str {
-                &self.program
+            fn default_executable(&self) -> Option<ArgsList> {
+                if self.executable.is_empty() {
+                    None
+                } else {
+                    Some(self.executable.clone().into_iter().map(|s| s.to_string()).collect())
+                }
             }
 
             fn test_pattern(&self) -> &str {
