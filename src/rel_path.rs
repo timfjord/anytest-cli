@@ -106,6 +106,8 @@ impl Iterator for LRange {
     }
 }
 
+type LineWithNr = (String, LineNr);
+
 #[derive(Debug)]
 pub struct RelPath {
     root: PathBuf,
@@ -192,7 +194,7 @@ impl RelPath {
     pub fn lines(
         &self,
         range: impl ops::RangeBounds<LineNr>,
-    ) -> Result<Box<dyn Iterator<Item = (String, LineNr)>>, Box<dyn Error>> {
+    ) -> Result<Box<dyn Iterator<Item = LineWithNr>>, Box<dyn Error>> {
         let numbers: LRange = LRange::try_from_range(&range)?;
         let mut buffer = self.open(numbers.forward_to())?;
 
@@ -321,10 +323,10 @@ mod tests {
         root: &str,
         path: &str,
         range: impl ops::RangeBounds<LineNr>,
-    ) -> Result<Vec<(String, LineNr)>, Box<dyn Error>> {
+    ) -> Result<Vec<LineWithNr>, Box<dyn Error>> {
         let lines = RelPath::new(Some(root), path)?
             .lines(range)?
-            .collect::<Vec<(String, LineNr)>>();
+            .collect::<Vec<LineWithNr>>();
 
         Ok(lines)
     }

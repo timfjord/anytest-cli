@@ -93,9 +93,9 @@ impl TestFramework for Cargotest {
             nearest.line_nr().unwrap()..=context.line_nr().unwrap(),
         )?;
         let test_name = if nearest.namespaces().is_empty() {
-            forward_nearest.tests().get(0).unwrap().to_string()
+            forward_nearest.tests().first().unwrap().to_string()
         } else if forward_nearest.tests().is_empty() {
-            nearest.tests().get(0).unwrap().to_string()
+            nearest.tests().first().unwrap().to_string()
         } else {
             [&nearest.namespaces()[0..1], &forward_nearest.tests()[0..1]]
                 .concat()
