@@ -55,7 +55,7 @@ pub fn derive_test_framework_meta(input: TokenStream) -> TokenStream {
                 regex::Regex::new(&self.pattern)
             }
 
-            fn default_executable(&self) -> Option<ArgsList> {
+            fn default_executable(&self) -> Option<crate::ArgsList> {
                 if self.executable.is_empty() {
                     None
                 } else {
