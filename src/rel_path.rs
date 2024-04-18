@@ -106,6 +106,8 @@ impl Iterator for LRange {
     }
 }
 
+type LineWithNr = (String, LineNr);
+
 #[derive(Debug)]
 pub struct RelPath {
     root: PathBuf,
@@ -164,6 +166,10 @@ impl RelPath {
         &self.rel
     }
 
+    pub fn rel_str(&self) -> &str {
+        self.rel().to_str().unwrap_or_default()
+    }
+
     /// Opens the file and advances to the passed line.
     pub fn open(&self, line: LineNr) -> Result<io::BufReader<File>, io::Error> {
         let file = File::open(self.path())?;
@@ -188,7 +194,7 @@ impl RelPath {
     pub fn lines(
         &self,
         range: impl ops::RangeBounds<LineNr>,
-    ) -> Result<Box<dyn Iterator<Item = (String, LineNr)>>, Box<dyn Error>> {
+    ) -> Result<Box<dyn Iterator<Item = LineWithNr>>, Box<dyn Error>> {
         let numbers: LRange = LRange::try_from_range(&range)?;
         let mut buffer = self.open(numbers.forward_to())?;
 
@@ -204,6 +210,10 @@ impl RelPath {
         };
 
         Ok(Box::new(lines.map(Result::unwrap_or_default).zip(numbers)))
+    }
+
+    pub fn file(&self, path: &str) -> Result<Self, Box<dyn Error>> {
+        Self::new(Some(self.root().to_str().ok_or("Invalid root path")?), path)
     }
 }
 
@@ -313,10 +323,10 @@ mod tests {
         root: &str,
         path: &str,
         range: impl ops::RangeBounds<LineNr>,
-    ) -> Result<Vec<(String, LineNr)>, Box<dyn Error>> {
+    ) -> Result<Vec<LineWithNr>, Box<dyn Error>> {
         let lines = RelPath::new(Some(root), path)?
             .lines(range)?
-            .collect::<Vec<(String, LineNr)>>();
+            .collect::<Vec<LineWithNr>>();
 
         Ok(lines)
     }
