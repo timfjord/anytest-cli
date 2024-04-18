@@ -28,9 +28,7 @@ pub fn build_command(context: &Context) -> Result<Command, Box<dyn Error>> {
 
     command.current_dir(context.root());
     command.args(program_args);
-    command.args(test_framework.args());
     command.args(test_framework.position_args(context)?);
-    command.envs(test_framework.env());
 
     Ok(command)
 }

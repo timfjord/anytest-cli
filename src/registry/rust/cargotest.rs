@@ -1,7 +1,7 @@
 use super::Rust;
 use crate::{
     test_framework::{TestFramework, TestFrameworkMeta},
-    ArgsList, EnvVars,
+    ArgsList,
 };
 use regex::Regex;
 use smart_default::SmartDefault;
@@ -17,8 +17,6 @@ pub struct Cargotest {
     pattern: String,
     #[default = "cargo test"]
     program: String,
-    args: ArgsList,
-    env: EnvVars,
     #[default = r"(#\[(?:\w+::|rs)?test)"]
     test_pattern: String,
     #[default = r"mod (tests?)"]

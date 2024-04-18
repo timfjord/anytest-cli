@@ -1,5 +1,5 @@
 use crate::{
-    context::Nearest, language::Language, named_pattern::NamedPattern, ArgsList, Context, EnvVars,
+    context::Nearest, language::Language, named_pattern::NamedPattern, ArgsList, Context,
     Scope,
 };
 use regex::Regex;
@@ -17,10 +17,6 @@ pub trait TestFrameworkMeta {
     fn pattern(&self) -> Result<Regex, regex::Error>;
 
     fn default_program(&self) -> &str;
-
-    fn args(&self) -> &ArgsList;
-
-    fn env(&self) -> &EnvVars;
 
     fn test_pattern(&self) -> &str;
 

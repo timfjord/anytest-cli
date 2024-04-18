@@ -29,10 +29,6 @@ pub fn derive_language(input: TokenStream) -> TokenStream {
             fn name(&self) -> &str {
                 stringify!(#language_name)
             }
-
-            fn env(&self) -> &crate::EnvVars {
-                &self.env
-            }
         }
     };
 
@@ -61,14 +57,6 @@ pub fn derive_test_framework_meta(input: TokenStream) -> TokenStream {
 
             fn default_program(&self) -> &str {
                 &self.program
-            }
-
-            fn args(&self) -> &crate::ArgsList {
-                &self.args
-            }
-
-            fn env(&self) -> &crate::EnvVars {
-                &self.env
             }
 
             fn test_pattern(&self) -> &str {
