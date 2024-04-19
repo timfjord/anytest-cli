@@ -17,6 +17,8 @@ pub trait TestFrameworkMeta {
 
     fn default_executable(&self) -> Option<ArgsList>;
 
+    fn args(&self) -> ArgsList;
+
     fn test_pattern(&self) -> &str;
 
     fn namespace_pattern(&self) -> &str;

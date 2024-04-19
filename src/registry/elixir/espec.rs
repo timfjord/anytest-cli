@@ -9,6 +9,7 @@ pub struct ESpec {
     pattern: String,
     #[default(_code = r#"vec!["mix", "espec"]"#)]
     executable: Vec<&'static str>,
+    args: Vec<&'static str>,
     test_pattern: String,
     namespace_pattern: String,
 }

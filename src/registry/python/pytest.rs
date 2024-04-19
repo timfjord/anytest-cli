@@ -15,6 +15,7 @@ pub struct Pytest {
     #[default = r"(test_[^/\\]+|[^/\\]+_test)\.py$"]
     pattern: String,
     executable: Vec<&'static str>,
+    args: Vec<&'static str>,
     #[default = r"\s*(?:async )?def (test_\w+)"]
     test_pattern: String,
     #[default = r"\s*class (\w+)"]
