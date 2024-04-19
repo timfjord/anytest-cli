@@ -14,3 +14,7 @@ where
 
     args
 }
+
+pub fn is_executable(binary_name: &str) -> bool {
+    which::which(binary_name).is_ok()
+}

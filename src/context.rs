@@ -149,6 +149,7 @@ impl Context {
             }
         }
 
+        namespaces.reverse();
         Ok(Nearest {
             tests,
             namespaces,
