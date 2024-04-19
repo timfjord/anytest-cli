@@ -41,9 +41,8 @@ impl TestFramework for ExUnit {
 
     fn build_line_position_args(&self, context: &Context) -> Result<ArgsList, Box<dyn Error>> {
         let file_args = self.build_file_position_args(context)?;
-        let line_nr = context.line_nr_or_default();
 
-        if !is_mix(context) || line_nr < 2 {
+        if !is_mix(context) || context.line_nr_or_default() < 2 {
             return Ok(file_args);
         }
 
