@@ -5,6 +5,7 @@ use regex::Regex;
 use std::error::Error;
 
 pub trait TestFrameworkMeta {
+    #[allow(clippy::redundant_allocation)]
     fn language(&self) -> Box<&dyn Language>;
 
     fn language_name(&self) -> &str {
