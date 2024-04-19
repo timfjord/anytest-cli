@@ -1,7 +1,6 @@
 use clap::Parser;
 use cli::Args;
 use std::error::Error;
-use std::io::{self, Write};
 
 mod cli;
 
@@ -13,10 +12,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     if args.is_dry_run() {
         println!("{}", anytest::format_command(&command));
     } else {
-        let output = command.output()?;
+        let output = command.spawn()?.wait_with_output()?;
 
-        io::stderr().write_all(&output.stderr)?;
-        io::stdout().write_all(&output.stdout)?;
+        if !output.status.success() {
+            // TODO: handle this differently
+            std::process::exit(output.status.code().unwrap_or(1));
+        }
     }
 
     Ok(())
