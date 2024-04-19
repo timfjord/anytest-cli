@@ -25,7 +25,7 @@ impl TestFramework for RSpec {
         } else if let Some(spring_bin) = context.find_file("bin/spring") {
             utils::concat([spring_bin.rel_str()], executable)
         } else if let Some(bin) = context.find_file("bin/rspec") {
-            utils::concat([bin.rel_str()], executable)
+            vec![bin.rel_str().to_string()]
         } else if context.find_file("Gemfile").is_some() {
             utils::concat(["bundle", "exec"], executable)
         } else {
