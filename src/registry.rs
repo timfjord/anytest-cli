@@ -1,6 +1,7 @@
 use crate::{test_framework::TestFramework, Context};
 
 mod elixir;
+mod javascript;
 mod python;
 mod ruby;
 mod rust;
@@ -15,6 +16,7 @@ impl Registry {
 
         registry.add(Box::<elixir::ESpec>::default());
         registry.add(Box::<elixir::ExUnit>::default());
+        registry.add(Box::<javascript::Jest>::default());
         registry.add(Box::<python::Pytest>::default());
         registry.add(Box::<ruby::RSpec>::default());
         registry.add(Box::<rust::Cargotest>::default());

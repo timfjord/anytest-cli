@@ -10,6 +10,7 @@ pub struct RSpec {
     language: Ruby,
     #[default = r"(_spec\.rb|spec[/\\].*\.feature)$"]
     pattern: String,
+    args: Vec<&'static str>,
     executable: Vec<&'static str>,
     test_pattern: String,
     namespace_pattern: String,

@@ -63,6 +63,11 @@ pub fn derive_test_framework_meta(input: TokenStream) -> TokenStream {
                 }
             }
 
+            fn args(&self) -> crate::ArgsList {
+                self.args.clone().into_iter().map(|s| s.to_string()).collect()
+            }
+
+
             fn test_pattern(&self) -> &str {
                 &self.test_pattern
             }

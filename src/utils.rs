@@ -1,5 +1,7 @@
 use crate::ArgsList;
 
+pub const EOO: &str = "--";
+
 pub fn concat<I1, S1, I2, S2>(vec1: I1, vec2: I2) -> ArgsList
 where
     I1: IntoIterator<Item = S1>,

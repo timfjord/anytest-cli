@@ -13,6 +13,7 @@ pub struct ExUnit {
     #[default = r"_test\.exs$"]
     pattern: String,
     executable: Vec<&'static str>,
+    args: Vec<&'static str>,
     test_pattern: String,
     namespace_pattern: String,
 }
