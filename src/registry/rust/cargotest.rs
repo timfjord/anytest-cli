@@ -1,6 +1,7 @@
 use super::Rust;
 use crate::{
     test_framework::{TestFramework, TestFrameworkMeta},
+    utils::concat,
     ArgsList,
 };
 use regex::Regex;
@@ -69,11 +70,7 @@ impl TestFramework for Cargotest {
         }
 
         let namespace = [&modules[1..], &["".into()]].concat().join(SEPARATOR);
-        Ok(args
-            .iter()
-            .chain(iter::once(&namespace))
-            .map(|s| s.to_string())
-            .collect())
+        Ok(concat(args, [namespace]))
     }
 
     fn build_line_position_args(

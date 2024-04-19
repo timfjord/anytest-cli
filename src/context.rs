@@ -84,6 +84,14 @@ impl Context {
         self.line_nr
     }
 
+    pub fn line_nr_or_default(&self) -> LineNr {
+        self.line_nr.unwrap_or(1)
+    }
+
+    pub fn rel_full(&self) -> String {
+        format!("{}:{}", self.rel_str(), self.line_nr_or_default())
+    }
+
     pub fn scope(&self) -> &Scope {
         &self.scope
     }
@@ -141,6 +149,7 @@ impl Context {
             }
         }
 
+        namespaces.reverse();
         Ok(Nearest {
             tests,
             namespaces,
