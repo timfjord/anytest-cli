@@ -59,9 +59,7 @@ pub trait TestFramework: TestFrameworkMeta {
     }
 
     fn build_line_position_args(&self, context: &Context) -> Result<ArgsList, Box<dyn Error>> {
-        let path_with_line = format!("{}:{}", context.rel_str(), context.line_nr().unwrap_or(1));
-
-        Ok(vec![path_with_line])
+        Ok(vec![context.rel_full()])
     }
 
     fn position_args(&self, context: &Context) -> Result<ArgsList, Box<dyn Error>> {
