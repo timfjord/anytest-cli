@@ -43,8 +43,8 @@ pub fn derive_test_framework_meta(input: TokenStream) -> TokenStream {
 
     let expanded = quote! {
         impl TestFrameworkMeta for #test_framework {
-            fn language(&self) -> Box<&dyn crate::language::Language> {
-                Box::new(&self.language)
+            fn language(&self) -> &dyn crate::language::Language {
+                &self.language
             }
 
             fn name(&self) -> &str {
