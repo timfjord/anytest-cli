@@ -169,67 +169,28 @@ impl Context {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::{
-        env,
-        fs::{self, File},
-        io::Write,
-    };
 
-    fn create_folder(base: &PathBuf, path: &str) -> Result<PathBuf, Box<dyn Error>> {
-        let folder = base.join(path);
-
-        match fs::create_dir(&folder) {
-            Ok(_) => Ok(folder),
-            Err(error) => match error.kind() {
-                std::io::ErrorKind::AlreadyExists => Ok(folder),
-                _ => Err(error.into()),
-            },
-        }
-    }
-
-    fn get_scope(
-        root: &PathBuf,
-        path: &PathBuf,
-        line: Option<LineNr>,
-        scope: Option<Scope>,
-    ) -> Scope {
-        let context = Context::new(
-            Some(root.to_str().unwrap()),
-            path.to_str().unwrap(),
-            line,
-            scope,
-        )
-        .unwrap();
+    fn get_scope(line: Option<LineNr>, scope: Option<Scope>) -> Scope {
+        let context = Context::new(Some("tests/fixtures/folder"), "file.txt", line, scope).unwrap();
         context.scope().clone()
     }
 
     #[test]
     fn test_context_new() {
-        let dir = env::temp_dir();
-        let folder = create_folder(&dir, "folder").unwrap();
-        let file = folder.join("file.rb");
-
-        File::create(&file).unwrap();
-
+        assert!(matches!(get_scope(Some(123), None), Scope::Line));
         assert!(matches!(
-            get_scope(&folder, &file, Some(123), None),
-            Scope::Line
-        ));
-        assert!(matches!(
-            get_scope(&folder, &file, Some(123), Some(Scope::Suite)),
+            get_scope(Some(123), Some(Scope::Suite)),
             Scope::Suite
         ));
-        assert!(matches!(get_scope(&folder, &file, None, None), Scope::File));
+        assert!(matches!(get_scope(None, None), Scope::File));
     }
 
     fn find_nearest(
-        root: &str,
-        path: &str,
         test_patterns: &[NamedPattern],
         namespace_patters: &[NamedPattern],
         range: impl ops::RangeBounds<LineNr>,
     ) -> Nearest {
-        Context::new(Some(root), path, None, None)
+        Context::new(Some("tests/fixtures/folder"), "file.rb", None, None)
             .unwrap()
             .find_nearest(test_patterns, namespace_patters, range)
             .unwrap()
@@ -237,17 +198,7 @@ mod tests {
 
     #[test]
     fn test_content_find_nearest() {
-        let dir = env::temp_dir();
-        let folder = create_folder(&dir, "folder").unwrap();
-        let file = folder.join("file.rb");
-
-        let mut f = File::create(&file).unwrap();
-        f.write_all("class TestClass\n  def test_method do\n  end\nend\n".as_bytes())
-            .unwrap();
-
         let nearest = find_nearest(
-            dir.to_str().unwrap(),
-            "folder/file.rb",
             &[r"^\s*def\s+(test_\w+)".into()],
             &[r"^\s*(?:class|module)\s+(\S+)".into()],
             2..=1,

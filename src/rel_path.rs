@@ -220,23 +220,7 @@ impl RelPath {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::{
-        env,
-        fs::{self, File},
-        io::Write,
-    };
-
-    fn create_folder(base: &PathBuf, path: &str) -> Result<PathBuf, Box<dyn Error>> {
-        let folder = base.join(path);
-
-        match fs::create_dir(&folder) {
-            Ok(_) => Ok(folder),
-            Err(error) => match error.kind() {
-                std::io::ErrorKind::AlreadyExists => Ok(folder),
-                _ => Err(error.into()),
-            },
-        }
-    }
+    use std::env;
 
     fn rel_path_error(root: &str, path: &str) -> String {
         RelPath::new(Some(root), path).unwrap_err().to_string()
@@ -244,49 +228,46 @@ mod tests {
 
     #[test]
     fn test_rel_path_new() {
-        let dir = env::temp_dir();
-        let folder = create_folder(&dir, "folder").unwrap();
-        let file = folder.join("file.rs");
-        let other_file = dir.join("other_file.rs");
-
-        File::create(&file).unwrap();
-        File::create(&other_file).unwrap();
+        let folder = "tests/fixtures/folder/subfolder";
+        let file = "file.txt";
+        let other_file = env::current_dir()
+            .unwrap()
+            .join("tests/fixtures/folder/file.txt")
+            .to_str()
+            .unwrap()
+            .to_string();
 
         assert_eq!(
-            rel_path_error("some_folder", ""),
+            rel_path_error("tests/fixtures/folder/file.txt", ""),
             "Root path must be an existing directory"
         );
 
         assert_eq!(
-            rel_path_error(file.to_str().unwrap(), ""),
+            rel_path_error("/tmp/s0me_f0lDer", ""),
             "Root path must be an existing directory"
         );
 
         assert_eq!(
-            rel_path_error("/tmp/some_folder", ""),
-            "Root path must be an existing directory"
-        );
-
-        assert_eq!(
-            rel_path_error(folder.to_str().unwrap(), "non_existent.rs"),
+            rel_path_error(folder, "non_existent.rs"),
             "Path does not exist"
         );
 
         assert_eq!(
-            rel_path_error(folder.to_str().unwrap(), other_file.to_str().unwrap()),
+            rel_path_error(folder, &other_file),
             "Path must be a subpath of the root path"
         );
 
-        let rel_path =
-            RelPath::new(Some(folder.to_str().unwrap()), file.to_str().unwrap()).unwrap();
+        let rel_path = RelPath::new(Some(folder), "file.txt").unwrap();
 
-        assert_eq!(*rel_path.root(), folder);
-        assert_eq!(*rel_path.path(), file);
-        assert_eq!(*rel_path.rel(), PathBuf::from("file.rs"));
+        assert!(rel_path.root().ends_with(folder));
+        assert!(rel_path.path().ends_with(format!("{}/{}", folder, file)));
+        assert_eq!(*rel_path.rel(), PathBuf::from(file));
     }
 
-    fn read_line(root: &str, path: &str, line: LineNr) -> Result<String, Box<dyn Error>> {
-        let mut buf_reader = RelPath::new(Some(root), path).unwrap().open(line)?;
+    fn read_line(line: LineNr) -> Result<String, Box<dyn Error>> {
+        let mut buf_reader = RelPath::new(Some("tests/fixtures/folder"), "file.txt")
+            .unwrap()
+            .open(line)?;
         let mut buf = String::new();
         buf_reader.read_line(&mut buf).unwrap();
         Ok(buf)
@@ -294,37 +275,16 @@ mod tests {
 
     #[test]
     fn test_rel_path_open() {
-        let dir = env::temp_dir();
-        let folder = create_folder(&dir, "folder").unwrap();
-        let file = folder.join("file.rs");
+        assert_eq!(read_line(1).unwrap(), "line1\n");
+        assert_eq!(read_line(3).unwrap(), "line3\n");
+        assert_eq!(read_line(10).unwrap(), "");
 
-        let mut f = File::create(&file).unwrap();
-        f.write_all("line1\nline2\nline3\nline4\nline5".as_bytes())
-            .unwrap();
-
-        assert_eq!(
-            read_line(folder.to_str().unwrap(), "file.rs", 1).unwrap(),
-            "line1\n"
-        );
-        assert_eq!(
-            read_line(folder.to_str().unwrap(), "file.rs", 3).unwrap(),
-            "line3\n"
-        );
-        assert_eq!(
-            read_line(folder.to_str().unwrap(), "file.rs", 6).unwrap(),
-            ""
-        );
-
-        let error = read_line(folder.to_str().unwrap(), "file.rs", 7).unwrap_err();
-        assert_eq!(error.to_string(), "Line #7 not found");
+        let error = read_line(11).unwrap_err();
+        assert_eq!(error.to_string(), "Line #11 not found");
     }
 
-    fn get_lines(
-        root: &str,
-        path: &str,
-        range: impl ops::RangeBounds<LineNr>,
-    ) -> Result<Vec<LineWithNr>, Box<dyn Error>> {
-        let lines = RelPath::new(Some(root), path)?
+    fn get_lines(range: impl ops::RangeBounds<LineNr>) -> Result<Vec<LineWithNr>, Box<dyn Error>> {
+        let lines = RelPath::new(Some("tests/fixtures/folder"), "file.txt")?
             .lines(range)?
             .collect::<Vec<LineWithNr>>();
 
@@ -333,16 +293,8 @@ mod tests {
 
     #[test]
     fn test_rel_path_lines() {
-        let dir = env::temp_dir();
-        let folder = create_folder(&dir, "folder").unwrap();
-        let file = folder.join("file.rs");
-
-        let mut f = File::create(&file).unwrap();
-        f.write_all("line1\nline2\nline3\nline4\nline5\nline6\nline7\nline8\nline9".as_bytes())
-            .unwrap();
-
         assert_eq!(
-            get_lines(folder.to_str().unwrap(), "file.rs", ..).unwrap(),
+            get_lines(..).unwrap(),
             vec![
                 (String::from("line1"), 1),
                 (String::from("line2"), 2),
@@ -357,7 +309,7 @@ mod tests {
         );
 
         assert_eq!(
-            get_lines(folder.to_str().unwrap(), "file.rs", ..5).unwrap(),
+            get_lines(..5).unwrap(),
             vec![
                 (String::from("line1"), 1),
                 (String::from("line2"), 2),
@@ -367,7 +319,7 @@ mod tests {
         );
 
         assert_eq!(
-            get_lines(folder.to_str().unwrap(), "file.rs", 2..=6).unwrap(),
+            get_lines(2..=6).unwrap(),
             vec![
                 (String::from("line2"), 2),
                 (String::from("line3"), 3),
@@ -378,7 +330,7 @@ mod tests {
         );
 
         assert_eq!(
-            get_lines(folder.to_str().unwrap(), "file.rs", 7..).unwrap(),
+            get_lines(7..).unwrap(),
             vec![
                 (String::from("line7"), 7),
                 (String::from("line8"), 8),
@@ -387,7 +339,7 @@ mod tests {
         );
 
         assert_eq!(
-            get_lines(folder.to_str().unwrap(), "file.rs", 5..1).unwrap(),
+            get_lines(5..1).unwrap(),
             vec![
                 (String::from("line5"), 5),
                 (String::from("line4"), 4),
@@ -397,7 +349,7 @@ mod tests {
         );
 
         assert_eq!(
-            get_lines(folder.to_str().unwrap(), "file.rs", 6..=1).unwrap(),
+            get_lines(6..=1).unwrap(),
             vec![
                 (String::from("line6"), 6),
                 (String::from("line5"), 5),
@@ -408,15 +360,12 @@ mod tests {
             ]
         );
 
-        assert_eq!(
-            get_lines(folder.to_str().unwrap(), "file.rs", 1..=1).unwrap(),
-            vec![(String::from("line1"), 1)]
-        );
+        assert_eq!(get_lines(1..=1).unwrap(), vec![(String::from("line1"), 1)]);
 
-        let error = get_lines(folder.to_str().unwrap(), "file.rs", 0..5).unwrap_err();
+        let error = get_lines(0..5).unwrap_err();
         assert_eq!(error.to_string(), "`start` isn't 1-based");
 
-        let error = get_lines(folder.to_str().unwrap(), "file.rs", 1..1).unwrap_err();
+        let error = get_lines(1..1).unwrap_err();
         assert_eq!(error.to_string(), "`end` isn't 1-based");
     }
 }
