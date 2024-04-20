@@ -3,7 +3,7 @@ use common::Project;
 mod common;
 
 #[test]
-fn cargotest_line_on_lib() {
+fn test_cargotest_line_on_lib() {
     let project = Project::new("cargotest/crate");
 
     assert_eq!(
@@ -23,7 +23,7 @@ fn cargotest_line_on_lib() {
 }
 
 #[test]
-fn cargotest_line_on_modules_with_mod_as_test() {
+fn test_cargotest_line_on_modules_with_mod_as_test() {
     let project = Project::new("cargotest/crate");
 
     assert_eq!(
@@ -43,7 +43,7 @@ fn cargotest_line_on_modules_with_mod_as_test() {
 }
 
 #[test]
-fn cargotest_line_without_mod() {
+fn test_cargotest_line_without_mod() {
     let project = Project::new("cargotest/crate");
 
     assert_eq!(
@@ -63,7 +63,7 @@ fn cargotest_line_without_mod() {
 }
 
 #[test]
-fn cargotest_line_on_modules() {
+fn test_cargotest_line_on_modules() {
     let project = Project::new("cargotest/crate");
 
     assert_eq!(
@@ -113,7 +113,7 @@ fn cargotest_line_on_modules() {
 }
 
 #[test]
-fn cargotest_line_async_tokio() {
+fn test_cargotest_line_async_tokio() {
     let project = Project::new("cargotest/crate");
 
     assert_eq!(
@@ -123,7 +123,7 @@ fn cargotest_line_async_tokio() {
 }
 
 #[test]
-fn cargotest_line_rstest() {
+fn test_cargotest_line_rstest() {
     let project = Project::new("cargotest/crate");
 
     assert_eq!(
@@ -133,7 +133,7 @@ fn cargotest_line_rstest() {
 }
 
 #[test]
-fn cargotest_line_async_actix_rt() {
+fn test_cargotest_line_async_actix_rt() {
     let project = Project::new("cargotest/crate");
 
     assert_eq!(
@@ -143,7 +143,7 @@ fn cargotest_line_async_actix_rt() {
 }
 
 #[test]
-fn cargotest_line_integration_test() {
+fn test_cargotest_line_integration_test() {
     let project = Project::new("cargotest/crate");
 
     assert_eq!(
@@ -153,7 +153,7 @@ fn cargotest_line_integration_test() {
 }
 
 #[test]
-fn cargotest_file() {
+fn test_cargotest_file() {
     let project = Project::new("cargotest/crate");
 
     assert_eq!(project.test_file("src/lib.rs"), "cargo test");
@@ -174,7 +174,7 @@ fn cargotest_file() {
 }
 
 #[test]
-fn cargotest_file_integration_test() {
+fn test_cargotest_file_integration_test() {
     let project = Project::new("cargotest/crate");
 
     assert_eq!(
@@ -184,7 +184,7 @@ fn cargotest_file_integration_test() {
 }
 
 #[test]
-fn cargotest_suite() {
+fn test_cargotest_suite() {
     let project = Project::new("cargotest/crate");
 
     assert_eq!(project.test_suite("src/lib.rs"), "cargo test");
@@ -197,7 +197,7 @@ fn cargotest_suite() {
 }
 
 #[test]
-fn cargotest_workspace_file() {
+fn test_cargotest_workspace_file() {
     let project = Project::new("cargotest");
 
     assert_eq!(

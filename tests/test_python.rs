@@ -3,7 +3,7 @@ use common::Project;
 mod common;
 
 #[test]
-fn pytest_line() {
+fn test_pytest_line() {
     let project = Project::new("pytest");
 
     assert_eq!(
@@ -33,7 +33,7 @@ fn pytest_line() {
 }
 
 #[test]
-fn pytest_xunit_line() {
+fn test_pytest_xunit_line() {
     let project = Project::new("nose");
 
     assert_eq!(
@@ -78,7 +78,7 @@ fn pytest_xunit_line() {
 }
 
 #[test]
-fn pytest_xunit_line_no_nearest() {
+fn test_pytest_xunit_line_no_nearest() {
     let project = Project::new("nose");
 
     assert_eq!(
@@ -88,7 +88,7 @@ fn pytest_xunit_line_no_nearest() {
 }
 
 #[test]
-fn pytest_xunit_file() {
+fn test_pytest_xunit_file() {
     let project = Project::new("nose");
 
     assert_eq!(
@@ -98,14 +98,14 @@ fn pytest_xunit_file() {
 }
 
 #[test]
-fn pytest_xunit_suite() {
+fn test_pytest_xunit_suite() {
     let project = Project::new("nose");
 
     assert_eq!(project.test_suite("test_class.py"), "python -m pytest");
 }
 
 #[test]
-fn pytest_pipenv_line() {
+fn test_pytest_pipenv_line() {
     let project = Project::new("pipenv");
 
     assert_eq!(
@@ -115,7 +115,7 @@ fn pytest_pipenv_line() {
 }
 
 #[test]
-fn pytest_pipenv_file() {
+fn test_pytest_pipenv_file() {
     let project = Project::new("pipenv");
 
     assert_eq!(
@@ -125,7 +125,7 @@ fn pytest_pipenv_file() {
 }
 
 #[test]
-fn pytest_pipenv_suite() {
+fn test_pytest_pipenv_suite() {
     let project = Project::new("pipenv");
 
     assert_eq!(
@@ -135,7 +135,7 @@ fn pytest_pipenv_suite() {
 }
 
 #[test]
-fn pytest_poetry_line() {
+fn test_pytest_poetry_line() {
     let project = Project::new("poetry");
 
     assert_eq!(
@@ -145,7 +145,7 @@ fn pytest_poetry_line() {
 }
 
 #[test]
-fn pytest_poetry_file() {
+fn test_pytest_poetry_file() {
     let project = Project::new("poetry");
 
     assert_eq!(
@@ -155,7 +155,7 @@ fn pytest_poetry_file() {
 }
 
 #[test]
-fn pytest_poetry_suite() {
+fn test_pytest_poetry_suite() {
     let project = Project::new("poetry");
 
     assert_eq!(
@@ -165,7 +165,7 @@ fn pytest_poetry_suite() {
 }
 
 #[test]
-fn pytest_pdm_line() {
+fn test_pytest_pdm_line() {
     let project = Project::new("pdm");
 
     assert_eq!(
@@ -175,7 +175,7 @@ fn pytest_pdm_line() {
 }
 
 #[test]
-fn pytest_pdm_file() {
+fn test_pytest_pdm_file() {
     let project = Project::new("pdm");
 
     assert_eq!(
@@ -185,7 +185,7 @@ fn pytest_pdm_file() {
 }
 
 #[test]
-fn pytest_pdm_suite() {
+fn test_pytest_pdm_suite() {
     let project = Project::new("pdm");
 
     assert_eq!(

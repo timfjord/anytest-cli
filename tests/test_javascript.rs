@@ -3,7 +3,7 @@ use common::Project;
 mod common;
 
 #[test]
-fn jest_line() {
+fn test_jest_line() {
     let project = Project::new("jest");
 
     assert_eq!(
@@ -23,7 +23,7 @@ fn jest_line() {
 }
 
 #[test]
-fn jest_line_context() {
+fn test_jest_line_context() {
     let project = Project::new("jest");
 
     assert_eq!(
@@ -43,7 +43,7 @@ fn jest_line_context() {
 }
 
 #[test]
-fn jest_line_coffee() {
+fn test_jest_line_coffee() {
     let project = Project::new("jest");
 
     assert_eq!(
@@ -63,7 +63,7 @@ fn jest_line_coffee() {
 }
 
 #[test]
-fn jest_line_react() {
+fn test_jest_line_react() {
     let project = Project::new("jest");
 
     assert_eq!(
@@ -83,7 +83,7 @@ fn jest_line_react() {
 }
 
 #[test]
-fn jest_line_no_nearest() {
+fn test_jest_line_no_nearest() {
     let project = Project::new("jest");
 
     assert_eq!(
@@ -93,7 +93,7 @@ fn jest_line_no_nearest() {
 }
 
 #[test]
-fn jest_file() {
+fn test_jest_file() {
     let project = Project::new("jest");
 
     assert_eq!(
@@ -103,7 +103,7 @@ fn jest_file() {
 }
 
 #[test]
-fn jest_file_outside_tests_folder() {
+fn test_jest_file_outside_tests_folder() {
     let project = Project::new("jest");
 
     assert_eq!(
@@ -113,7 +113,7 @@ fn jest_file_outside_tests_folder() {
 }
 
 #[test]
-fn jest_suite() {
+fn test_jest_suite() {
     let project = Project::new("jest");
 
     assert_eq!(

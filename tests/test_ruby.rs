@@ -3,7 +3,7 @@ use common::Project;
 mod common;
 
 #[test]
-fn rspec_line1() {
+fn test_rspec_line1() {
     let project = Project::new("rspec");
 
     assert_eq!(
@@ -13,7 +13,7 @@ fn rspec_line1() {
 }
 
 #[test]
-fn rspec_line2() {
+fn test_rspec_line2() {
     let project = Project::new("rspec");
 
     assert_eq!(
@@ -33,28 +33,28 @@ fn rspec_line2() {
 }
 
 #[test]
-fn rspec_file() {
+fn test_rspec_file() {
     let project = Project::new("rspec");
 
     assert_eq!(project.test_file("normal_spec.rb"), "rspec normal_spec.rb");
 }
 
 #[test]
-fn rspec_file_starts_with_test() {
+fn test_rspec_file_starts_with_test() {
     let project = Project::new("rspec");
 
     assert_eq!(project.test_file("test_spec.rb"), "rspec test_spec.rb");
 }
 
 #[test]
-fn rspec_suite() {
+fn test_rspec_suite() {
     let project = Project::new("rspec");
 
     assert_eq!(project.test_suite("normal_spec.rb"), "rspec ");
 }
 
 #[test]
-fn rspec_turnip() {
+fn test_rspec_turnip() {
     let project = Project::new("rspec");
 
     assert_eq!(

@@ -3,7 +3,7 @@ use common::Project;
 mod common;
 
 #[test]
-fn espec_line() {
+fn test_espec_line() {
     let project = Project::new("espec");
 
     assert_eq!(
@@ -13,7 +13,7 @@ fn espec_line() {
 }
 
 #[test]
-fn espec_file() {
+fn test_espec_file() {
     let project = Project::new("espec");
 
     assert_eq!(
@@ -23,14 +23,14 @@ fn espec_file() {
 }
 
 #[test]
-fn espec_suite() {
+fn test_espec_suite() {
     let project = Project::new("espec");
 
     assert_eq!(project.test_suite("normal_spec.exs"), "mix espec");
 }
 
 #[test]
-fn exunit_without_mix_line() {
+fn test_exunit_without_mix_line() {
     let project = Project::new("exunit");
 
     assert_eq!(
@@ -40,7 +40,7 @@ fn exunit_without_mix_line() {
 }
 
 #[test]
-fn exunit_without_mix_file() {
+fn test_exunit_without_mix_file() {
     let project = Project::new("exunit");
 
     assert_eq!(
@@ -50,14 +50,14 @@ fn exunit_without_mix_file() {
 }
 
 #[test]
-fn exunit_without_mix_suite() {
+fn test_exunit_without_mix_suite() {
     let project = Project::new("exunit");
 
     assert_eq!(project.test_suite("normal_test.exs"), "elixir *.exs");
 }
 
 #[test]
-fn exunit_mix_first_line() {
+fn test_exunit_mix_first_line() {
     let project = Project::new("exunit/mix");
 
     assert_eq!(
@@ -67,7 +67,7 @@ fn exunit_mix_first_line() {
 }
 
 #[test]
-fn exunit_mix_specific_line() {
+fn test_exunit_mix_specific_line() {
     let project = Project::new("exunit/mix");
 
     assert_eq!(
@@ -77,7 +77,7 @@ fn exunit_mix_specific_line() {
 }
 
 #[test]
-fn exunit_mix_file() {
+fn test_exunit_mix_file() {
     let project = Project::new("exunit/mix");
 
     assert_eq!(
@@ -87,7 +87,7 @@ fn exunit_mix_file() {
 }
 
 #[test]
-fn exunit_mix_suite() {
+fn test_exunit_mix_suite() {
     let project = Project::new("exunit/mix");
 
     assert_eq!(project.test_suite("normal_test.exs"), "mix test");

@@ -3,7 +3,7 @@ use common::Project;
 mod common;
 
 #[test]
-fn zigtest_line() {
+fn test_zigtest_line() {
     let project = Project::new("zigtest");
 
     assert_eq!(
@@ -13,14 +13,14 @@ fn zigtest_line() {
 }
 
 #[test]
-fn zigtest_file() {
+fn test_zigtest_file() {
     let project = Project::new("zigtest");
 
     assert_eq!(project.test_file("normal.zig"), "zig test normal.zig");
 }
 
 #[test]
-fn zigtest_suite() {
+fn test_zigtest_suite() {
     let project = Project::new("zigtest");
 
     assert_eq!(project.test_suite("normal.zig"), "zig build test");
