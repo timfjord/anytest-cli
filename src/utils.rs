@@ -20,3 +20,7 @@ where
 pub fn is_executable(binary_name: &str) -> bool {
     which::which(binary_name).is_ok()
 }
+
+pub fn quote(in_str: &str) -> String {
+    shlex::try_quote(in_str).unwrap_or_default().to_string()
+}

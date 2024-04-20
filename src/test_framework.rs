@@ -30,7 +30,13 @@ pub trait TestFramework: TestFrameworkMeta {
     }
 
     fn namespace_patterns(&self) -> Vec<NamedPattern> {
-        vec![self.namespace_pattern().into()]
+        let namespace_pattern = self.namespace_pattern();
+
+        if namespace_pattern.is_empty() {
+            vec![]
+        } else {
+            vec![namespace_pattern.into()]
+        }
     }
 
     fn is_suitable_for(&self, context: &Context) -> bool {

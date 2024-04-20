@@ -5,6 +5,7 @@ mod javascript;
 mod python;
 mod ruby;
 mod rust;
+mod zig;
 
 pub struct Registry {
     frameworks: Vec<Box<dyn TestFramework>>,
@@ -20,6 +21,7 @@ impl Registry {
         registry.add(Box::<python::Pytest>::default());
         registry.add(Box::<ruby::RSpec>::default());
         registry.add(Box::<rust::Cargotest>::default());
+        registry.add(Box::<zig::Zigtest>::default());
 
         registry
     }
