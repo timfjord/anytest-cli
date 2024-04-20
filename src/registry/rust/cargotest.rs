@@ -1,8 +1,7 @@
 use super::Rust;
 use crate::{
     test_framework::{TestFramework, TestFrameworkMeta},
-    utils::concat,
-    ArgsList,
+    utils, ArgsList,
 };
 use regex::Regex;
 use smart_default::SmartDefault;
@@ -71,11 +70,11 @@ impl TestFramework for Cargotest {
         }
 
         if modules.len() == 2 && modules[0] == "tests" {
-            return Ok(concat(args, ["--test", &modules[1]]));
+            return Ok(utils::concat(args, ["--test", &modules[1]]));
         }
 
         let namespace = [&modules[1..], &["".into()]].concat().join(SEPARATOR);
-        Ok(concat(args, [namespace]))
+        Ok(utils::concat(args, [namespace]))
     }
 
     fn build_line_position_args(

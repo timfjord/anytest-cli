@@ -8,17 +8,17 @@ fn jest_line() {
 
     assert_eq!(
         project.test_line("__tests__/normal-test.js", 2),
-        "jest --runTestsByPath -t ^Math -- __tests__/normal-test.js"
+        "jest --runTestsByPath -t '^Math' -- __tests__/normal-test.js"
     );
 
     assert_eq!(
         project.test_line("__tests__/normal-test.js", 3),
-        "jest --runTestsByPath -t ^Math Addition -- __tests__/normal-test.js"
+        "jest --runTestsByPath -t '^Math Addition' -- __tests__/normal-test.js"
     );
 
     assert_eq!(
         project.test_line("__tests__/normal-test.js", 4),
-        "jest --runTestsByPath -t ^Math Addition adds two numbers$ -- __tests__/normal-test.js"
+        "jest --runTestsByPath -t '^Math Addition adds two numbers$' -- __tests__/normal-test.js"
     );
 }
 
@@ -28,17 +28,17 @@ fn jest_line_context() {
 
     assert_eq!(
         project.test_line("__tests__/context-test.js", 1),
-        "jest --runTestsByPath -t ^Math -- __tests__/context-test.js"
+        "jest --runTestsByPath -t '^Math' -- __tests__/context-test.js"
     );
 
     assert_eq!(
         project.test_line("__tests__/context-test.js", 2),
-        "jest --runTestsByPath -t ^Math Addition -- __tests__/context-test.js"
+        "jest --runTestsByPath -t '^Math Addition' -- __tests__/context-test.js"
     );
 
     assert_eq!(
         project.test_line("__tests__/context-test.js", 3),
-        "jest --runTestsByPath -t ^Math Addition adds two numbers$ -- __tests__/context-test.js"
+        "jest --runTestsByPath -t '^Math Addition adds two numbers$' -- __tests__/context-test.js"
     );
 }
 
@@ -48,17 +48,17 @@ fn jest_line_coffee() {
 
     assert_eq!(
         project.test_line("__tests__/normal-test.coffee", 1),
-        "jest --runTestsByPath -t ^Math -- __tests__/normal-test.coffee"
+        "jest --runTestsByPath -t '^Math' -- __tests__/normal-test.coffee"
     );
 
     assert_eq!(
         project.test_line("__tests__/normal-test.coffee", 2),
-        "jest --runTestsByPath -t ^Math Addition -- __tests__/normal-test.coffee"
+        "jest --runTestsByPath -t '^Math Addition' -- __tests__/normal-test.coffee"
     );
 
     assert_eq!(
         project.test_line("__tests__/normal-test.coffee", 3),
-        "jest --runTestsByPath -t ^Math Addition adds two numbers$ -- __tests__/normal-test.coffee"
+        "jest --runTestsByPath -t '^Math Addition adds two numbers$' -- __tests__/normal-test.coffee"
     );
 }
 
@@ -68,17 +68,17 @@ fn jest_line_react() {
 
     assert_eq!(
         project.test_line("__tests__/normal-test.jsx", 1),
-        "jest --runTestsByPath -t ^Math -- __tests__/normal-test.jsx"
+        "jest --runTestsByPath -t '^Math' -- __tests__/normal-test.jsx"
     );
 
     assert_eq!(
         project.test_line("__tests__/normal-test.jsx", 2),
-        "jest --runTestsByPath -t ^Math Addition -- __tests__/normal-test.jsx"
+        "jest --runTestsByPath -t '^Math Addition' -- __tests__/normal-test.jsx"
     );
 
     assert_eq!(
         project.test_line("__tests__/normal-test.jsx", 3),
-        "jest --runTestsByPath -t ^Math Addition adds two numbers$ -- __tests__/normal-test.jsx"
+        "jest --runTestsByPath -t '^Math Addition adds two numbers$' -- __tests__/normal-test.jsx"
     );
 }
 

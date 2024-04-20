@@ -1,7 +1,7 @@
 use super::JavaScript;
 use crate::{
     test_framework::{TestFramework, TestFrameworkMeta},
-    utils::{self, concat},
+    utils,
 };
 use smart_default::SmartDefault;
 
@@ -57,7 +57,7 @@ impl TestFramework for Jest {
         if name.is_empty() {
             Ok(args)
         } else {
-            Ok(concat(["-t", &name], args))
+            Ok(utils::concat(["-t", &utils::quote(&name)], args))
         }
     }
 }
