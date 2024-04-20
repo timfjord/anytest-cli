@@ -12,9 +12,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    name: "Lint"
+    name: Lint
     steps:
       - uses: actions/checkout@v3
       - name: Lint

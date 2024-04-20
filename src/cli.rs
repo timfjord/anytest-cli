@@ -54,7 +54,7 @@ mod tests {
     use std::{
         env,
         fs::{self, File},
-        path::PathBuf
+        path::PathBuf,
     };
 
     use super::*;
