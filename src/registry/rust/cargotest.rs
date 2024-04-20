@@ -66,8 +66,12 @@ impl TestFramework for Cargotest {
             }
         }
 
-        if modules.len() == 2 && modules[0] == "tests" || modules.len() <= 1 {
+        if modules.len() <= 1 {
             return Ok(args);
+        }
+
+        if modules.len() == 2 && modules[0] == "tests" {
+            return Ok(concat(args, ["--test", &modules[1]]));
         }
 
         let namespace = [&modules[1..], &["".into()]].concat().join(SEPARATOR);
@@ -99,7 +103,11 @@ impl TestFramework for Cargotest {
                 .concat()
                 .join(SEPARATOR)
         };
-        let file_namespace = args.pop().unwrap_or_default();
+        let file_namespace = if args.len() > 0 && args[0] != "--test" {
+            args.pop().unwrap_or_default()
+        } else {
+            String::new()
+        };
 
         Ok(args
             .into_iter()

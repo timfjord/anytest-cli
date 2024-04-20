@@ -143,23 +143,24 @@ fn cargotest_line_async_actix_rt() {
 }
 
 #[test]
-fn cargotest_file() {
+fn cargotest_line_integration_test() {
     let project = Project::new("cargotest/crate");
 
     assert_eq!(
-        project.test_file("src/lib.rs"),
-        "cargo test"
+        project.test_line("tests/integration_test.rs", 3),
+        "cargo test --test integration_test it_adds_two -- --exact"
     );
+}
 
-    assert_eq!(
-        project.test_file("src/main.rs"),
-        "cargo test"
-    );
+#[test]
+fn cargotest_file() {
+    let project = Project::new("cargotest/crate");
 
-    assert_eq!(
-        project.test_file("src/somemod.rs"),
-        "cargo test somemod::"
-    );
+    assert_eq!(project.test_file("src/lib.rs"), "cargo test");
+
+    assert_eq!(project.test_file("src/main.rs"), "cargo test");
+
+    assert_eq!(project.test_file("src/somemod.rs"), "cargo test somemod::");
 
     assert_eq!(
         project.test_file("src/nested/mod.rs"),
@@ -173,36 +174,34 @@ fn cargotest_file() {
 }
 
 #[test]
-fn cargotest_suite() {
+fn cargotest_file_integration_test() {
     let project = Project::new("cargotest/crate");
 
     assert_eq!(
-        project.test_suite("src/lib.rs"),
-        "cargo test"
-    );
-
-    assert_eq!(
-        project.test_suite("src/somemod.rs"),
-        "cargo test"
-    );
-
-    assert_eq!(
-        project.test_suite("src/nested/mod.rs"),
-        "cargo test"
-    );
-
-    assert_eq!(
-        project.test_suite("src/too/nested.rs"),
-        "cargo test"
+        project.test_file("tests/integration_test.rs"),
+        "cargo test --test integration_test"
     );
 }
 
 #[test]
-fn cargotest_workspace_file() {
-        let project = Project::new("cargotest");
+fn cargotest_suite() {
+    let project = Project::new("cargotest/crate");
 
-        assert_eq!(
-            project.test_file("crate/src/lib.rs"),
-            "cargo test --package crate"
-        );
+    assert_eq!(project.test_suite("src/lib.rs"), "cargo test");
+
+    assert_eq!(project.test_suite("src/somemod.rs"), "cargo test");
+
+    assert_eq!(project.test_suite("src/nested/mod.rs"), "cargo test");
+
+    assert_eq!(project.test_suite("src/too/nested.rs"), "cargo test");
+}
+
+#[test]
+fn cargotest_workspace_file() {
+    let project = Project::new("cargotest");
+
+    assert_eq!(
+        project.test_file("crate/src/lib.rs"),
+        "cargo test --package crate"
+    );
 }
