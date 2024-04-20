@@ -102,7 +102,7 @@ impl TestFramework for Cargotest {
                 .concat()
                 .join(SEPARATOR)
         };
-        let file_namespace = if !args.is_empty() && args[0] != "--test" {
+        let file_namespace = if args.len() > 0 && args[0] != "--test" {
             args.pop().unwrap_or_default()
         } else {
             String::new()
