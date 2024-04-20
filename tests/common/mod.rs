@@ -16,13 +16,8 @@ impl Project {
     }
 
     fn test(&self, file: &str, line: Option<LineNr>, scope: Scope) -> String {
-        let context = Context::new(
-            Some(self.root.to_str().unwrap()),
-            file,
-            line,
-            Some(scope),
-        )
-        .unwrap();
+        let context =
+            Context::new(Some(self.root.to_str().unwrap()), file, line, Some(scope)).unwrap();
         let command = anytest::build_command(&context).unwrap();
 
         anytest::format_command(&command)
