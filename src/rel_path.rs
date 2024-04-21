@@ -117,6 +117,7 @@ pub struct RelPath {
 
 impl RelPath {
     pub fn new(root: Option<&str>, path: &str) -> Result<Self, Box<dyn Error>> {
+        let mut rel_root: Option<PathBuf> = None;
         let mut root = if let Some(root) = root {
             PathBuf::from(root)
         } else {
@@ -124,6 +125,7 @@ impl RelPath {
         };
 
         if !root.is_absolute() {
+            rel_root = Some(root.clone());
             root = env::current_dir()?.join(root);
         }
 
@@ -134,6 +136,13 @@ impl RelPath {
         let mut path = PathBuf::from(path);
 
         if !path.is_absolute() {
+            if let Some(rel) = rel_root {
+                path = path
+                    .clone()
+                    .strip_prefix(&rel)
+                    .unwrap_or(&path)
+                    .to_path_buf();
+            }
             path = root.join(path);
         }
 
@@ -230,6 +239,7 @@ mod tests {
     fn test_rel_path_new() {
         let folder = "tests/fixtures/folder/subfolder";
         let file = "file.txt";
+        let rel = format!("{}/{}", folder, file);
         let other_file = env::current_dir()
             .unwrap()
             .join("tests/fixtures/folder/file.txt")
@@ -259,8 +269,14 @@ mod tests {
 
         let rel_path = RelPath::new(Some(folder), "file.txt").unwrap();
 
-        assert!(rel_path.root().ends_with(folder));
-        assert!(rel_path.path().ends_with(format!("{}/{}", folder, file)));
+        assert!(rel_path.root().ends_with(&folder));
+        assert!(rel_path.path().ends_with(&rel));
+        assert_eq!(*rel_path.rel(), PathBuf::from(file));
+
+        let rel_path = RelPath::new(Some(folder), &rel).unwrap();
+
+        assert!(rel_path.root().ends_with(&folder));
+        assert!(rel_path.path().ends_with(&rel));
         assert_eq!(*rel_path.rel(), PathBuf::from(file));
     }
 
