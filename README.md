@@ -102,6 +102,41 @@ Once the tasks are set up, use either the `task: spawn` command or add keybindin
 ]
 ```
 
+## Usage with other crates
+
+`anytest` also acts as a library crate and can be used in other Rust projects.
+
+Currently, it exposes the `build_command` function that builds a [`std::process::Command`](https://doc.rust-lang.org/std/process/struct.Command.html) for the given context. See [tests/test_api.rs](https://github.com/timfjord/anytest-cli/blob/main/tests/test_api.rs) for more details.
+
+```rust
+use anytest::{Context, Scope};
+
+let context = Context::new(
+    Some("tests/fixtures/cargotest/crate"),
+    "tests/integration_test.rs",
+    Some(3),
+    Some(Scope::Line),
+)
+.unwrap();
+let command = anytest::build_command(&context).unwrap();
+
+assert_eq!(command.get_program(), "cargo");
+assert_eq!(
+    command
+        .get_args()
+        .map(|arg| arg.to_str().unwrap())
+        .collect::<Vec<_>>(),
+    vec![
+        "test",
+        "--test",
+        "integration_test",
+        "it_adds_two",
+        "--",
+        "--exact"
+    ]
+);
+```
+
 ## Contribution
 
 The easiest way to add a new test framework is to find it either in [the `AnyTest` repository](https://github.com/timfjord/AnyTest/tree/main/plugin/test_frameworks) or [the `vim-test` repository](https://github.com/vim-test/vim-test/tree/master/autoload/test) and try to adapt it.

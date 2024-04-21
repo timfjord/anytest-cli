@@ -3,7 +3,7 @@ use std::process::Command;
 
 pub use context::Context;
 pub use context::Scope;
-pub use rel_path::RelPath;
+pub(crate) use rel_path::RelPath;
 
 #[macro_use]
 extern crate anytest_derive;
@@ -17,7 +17,7 @@ mod test_framework;
 mod utils;
 
 pub type LineNr = usize;
-pub type ArgsList = Vec<String>;
+pub(crate) type ArgsList = Vec<String>;
 
 pub fn build_command(context: &Context) -> Result<Command, Box<dyn Error>> {
     let registry = registry::Registry::new();
