@@ -1,0 +1,29 @@
+[
+  {
+    "label": "anytest: test suite",
+    "command": "anytest",
+    "args": ["$ZED_FILE:$ZED_ROW", "--scope", "suite"],
+    "env": {},
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  },
+  {
+    "label": "anytest: test file",
+    "command": "anytest",
+    "args": ["$ZED_FILE:$ZED_ROW", "--scope", "file"],
+    "env": {},
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  },
+  {
+    "label": "anytest: test line",
+    "command": "anytest",
+    "args": ["$ZED_FILE:$ZED_ROW", "--scope", "line"],
+    "env": {},
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  }
+]

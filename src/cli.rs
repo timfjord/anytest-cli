@@ -5,12 +5,12 @@ use std::error::Error;
 
 const PATH_REGEX: &str = r"^(.*?)(?::(\d*))?$";
 
-/// Run any test from CLI
+/// Run any test from your terminal.
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 pub struct Args {
     #[arg()]
-    /// Path to the test file
+    /// Path to the test file, can be a file (e.g. `path/to/file.rs`) or a file with a line number (e.g. `path/to/file.rs:123`)
     path: String,
 
     /// Specify what tests to run
@@ -20,10 +20,6 @@ pub struct Args {
     /// Path to the root directory, if not passed, the current directory is used
     #[arg(short, long)]
     root: Option<String>,
-
-    /// Path to the config file
-    #[arg(short, long)]
-    config: Option<String>,
 
     /// Whether to run in dry-run mode
     #[arg(long, default_value_t = false)]
@@ -81,7 +77,6 @@ mod tests {
             path: path.to_string(),
             scope: None,
             root: Some(root.to_str().unwrap().to_string()),
-            config: None,
             dry_run: false,
         }
     }
