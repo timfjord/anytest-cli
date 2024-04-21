@@ -4,7 +4,7 @@
 
 Run any test from your terminal.
 
-Many test frameworks allow to run a single test, but they all use different format. The majority require to build quite complex queries that are hard to type and even remember. This tool aims to provide a unified way to run a single test by specifying only the file and the line number (following how RSpec/ExUnit/ESpec does that).
+Many test frameworks allow running a single test, but they all use different formats. The majority require to build quite complex queries that are hard to type and even remember. This tool aims to provide a unified way to run a single test by specifying only the file and the line number (following how RSpec/ExUnit/ESpec does that).
 The tool is heavily inspired by the awesome [vim-test](https://github.com/vim-test/vim-test) plugin.
 
 Currently, the following test frameworks are supported (and more are coming soon):
@@ -60,7 +60,7 @@ By default, `anytest` uses the current working directory as the root directory. 
 anytest anytest-cli/tests/test_rust.rs:10 -r anytest-cli
 ```
 
-When then root dirrectory is specified, the path to the test can be either relative to the root (e.g. `anytest tests/test_rust.rs:10 -r anytest-cli`) or relative to the current working directory (e.g. `anytest anytest-cli/tests/test_rust.rs:10 -r anytest-cli`).
+When the root directory is specified, the path to the test can be either relative to the root (e.g. `anytest tests/test_rust.rs:10 -r anytest-cli`) or relative to the current working directory (e.g. `anytest anytest-cli/tests/test_rust.rs:10 -r anytest-cli`).
 
 To run the tool in the dry-run mode, use the `--dry-run`/ flag:
 
@@ -77,9 +77,9 @@ anytest --help
 ## Usage with Zed
 
 Even though `anytest` is a standalone tool, the main driver behind writing it was to use it with [Zed](https://zed.dev).
-Currently, Zed has limited extensions support, so the only way to integrate `anytest` with Zed is to use [Zed tasks](https://zed.dev/docs/tasks).
+Currently, Zed has limited extension support, so the only way to integrate `anytest` with Zed is to use [Zed tasks](https://zed.dev/docs/tasks).
 
-The repository contains [an example `tasks.json` file](https://github.com/timfjord/anytest-cli/blob/main/examples/tasks.json) that can be coppied to the Zed configuration directory with the followind command:
+The repository contains [an example `tasks.json` file](https://github.com/timfjord/anytest-cli/blob/main/examples/tasks.json) that can be copied to the Zed configuration directory with the following command:
 
 ```sh
 wget https://raw.githubusercontent.com/timfjord/anytest-cli/main/examples/tasks.json -O ~/.config/zed/tasks.json -nc
