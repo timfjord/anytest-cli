@@ -13,9 +13,9 @@ Currently, the following test frameworks are supported (and more are coming soon
 | -------------: | :------------- | :---------------- |
 |     **Elixir** | ESpec, ExUnit  | `espec`, `exunit` |
 | **JavaScript** | Jest           | `jest`            |
-|     **Python** | PyTest         | `pytest`          |
+|     **Python** | pytest         | `pytest`          |
 |       **Ruby** | RSpec          | `rspec`           |
-|       **Rust** | Cargo          | `cargotest`       |
+|       **Rust** | Cargotest      | `cargotest`       |
 |        **Zig** | Zigtest        | `zigtest`         |
 
 Feel free to [open an issue](https://github.com/timfjord/anytest-cli/issues/new) with a test framework request as those test frameworks will be added first.
@@ -87,7 +87,7 @@ wget https://raw.githubusercontent.com/timfjord/anytest-cli/main/examples/tasks.
 
 Please note that the command above won't overwrite the existing `tasks.json` file. Remove the `-nc` flag to overwrite the existing file.
 
-Once the tasks are set up, use either the `task: spawn` command or add keybindings to run the tests.
+Once the tasks are set up, either pick the `task: spawn` command from the Command Palette or add keybindings to run the tests.
 
 ```json
 [
