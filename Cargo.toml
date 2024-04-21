@@ -17,7 +17,7 @@ categories = ["development-tools::testing", "command-line-utilities"]
 [dependencies]
 clap = { version = "4.5.3", features = ["derive"] }
 regex = "1.10.3"
-anytest-derive = { path = "crates/anytest-derive" }
+anytest-derive = { path = "crates/anytest-derive", version = "0.1.0" }
 log = "0.4.21"
 smart-default = "0.7.1"
 rev_buf_reader = "0.3.0"

@@ -1,7 +1,12 @@
 [package]
 name = "anytest-derive"
 version = "0.1.0"
+authors = ["Tim Masliuchenko"]
 edition = "2021"
+description = "anytest macros"
+readme = false
+repository = "https://github.com/timfjord/anytest-cli/tree/main/crates/anytest-derive"
+license = "MIT"
 
 [lib]
 proc-macro = true
