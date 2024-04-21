@@ -5,7 +5,15 @@ exclude = ["tests/fixtures"]
 [package]
 name = "anytest"
 version = "0.1.0"
+authors = ["Tim Masliuchenko"]
 edition = "2021"
+description = "Run any test from your terminal."
+readme = true
+repository = "https://github.com/timfjord/anytest-cli"
+license = "MIT"
+license-file = "LICENSE"
+keywords = ["testing"]
+categories = ["development-tools::testing", "command-line-utilities"]
 
 [dependencies]
 clap = { version = "4.5.3", features = ["derive"] }
@@ -16,3 +24,6 @@ smart-default = "0.7.1"
 rev_buf_reader = "0.3.0"
 which = "6.0.1"
 shlex = "1.3.0"
+
+[badges]
+maintenance = { status = "actively-developed" }
