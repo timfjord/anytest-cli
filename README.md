@@ -1,3 +1,6 @@
+<!-- markdownlint-disable -->
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://stand-with-ukraine.pp.ua)
+
 # anytest [![Lint](https://github.com/timfjord/anytest-cli/actions/workflows/lint.yml/badge.svg)](https://github.com/timfjord/anytest-cli/actions/workflows/lint.yml) [![Test](https://github.com/timfjord/anytest-cli/actions/workflows/test.yml/badge.svg)](https://github.com/timfjord/anytest-cli/actions/workflows/test.yml)
 
 <!-- markdownlint-enable -->
